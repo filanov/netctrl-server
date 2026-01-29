@@ -235,3 +235,20 @@ The server is designed to handle cluster management:
 - Graceful shutdown on SIGTERM/SIGINT for container environments
 - RESTful API with gRPC backend
 - Input validation at the service layer
+
+## Agent Integration
+
+Agents in separate repositories should import the server's generated API package:
+
+```go
+import v1 "github.com/filanov/netctrl-server/pkg/api/v1"
+
+// Create client
+conn, _ := grpc.Dial("localhost:9090")
+client := v1.NewAgentServiceClient(conn)
+
+// Use client
+client.RegisterAgent(ctx, &v1.RegisterAgentRequest{...})
+```
+
+The server owns the proto files and publishes generated client/server code in `pkg/api/v1/`.
