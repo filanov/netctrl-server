@@ -1,0 +1,17 @@
+server:
+  environment: development
+
+grpc:
+  port: 9090
+  enable_reflection: true
+
+gateway:
+  port: 8080
+  enable_cors: true
+
+storage:
+  type: memory
+
+logging:
+  level: info
+  format: text

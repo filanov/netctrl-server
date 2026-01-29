@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package netctrl.v1;
+
+option go_package = "github.com/mfilanov/netctrl-server/pkg/api/v1;v1";
+
+import "google/api/annotations.proto";
+
+// HealthService provides health check endpoints
+service HealthService {
+  // Check returns the health status of the service
+  rpc Check(HealthCheckRequest) returns (HealthCheckResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/health"
+    };
+  }
+
+  // Ready returns the readiness status of the service
+  rpc Ready(ReadinessCheckRequest) returns (ReadinessCheckResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/ready"
+    };
+  }
+}
+
+// HealthCheckRequest is the request for health checks
+message HealthCheckRequest {}
+
+// HealthCheckResponse contains health status information
+message HealthCheckResponse {
+  // Overall health status
+  HealthStatus status = 1;
+
+  // Optional message providing additional context
+  string message = 2;
+}
+
+// ReadinessCheckRequest is the request for readiness checks
+message ReadinessCheckRequest {}
+
+// ReadinessCheckResponse contains readiness status information
+message ReadinessCheckResponse {
+  // Overall readiness status
+  ReadinessStatus status = 1;
+
+  // Optional message providing additional context
+  string message = 2;
+}
+
+// HealthStatus represents the health state of the service
+enum HealthStatus {
+  HEALTH_STATUS_UNSPECIFIED = 0;
+  HEALTH_STATUS_HEALTHY = 1;
+  HEALTH_STATUS_UNHEALTHY = 2;
+}
+
+// ReadinessStatus represents the readiness state of the service
+enum ReadinessStatus {
+  READINESS_STATUS_UNSPECIFIED = 0;
+  READINESS_STATUS_READY = 1;
+  READINESS_STATUS_NOT_READY = 2;
+}

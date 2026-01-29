@@ -1,0 +1,471 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "v1/cluster.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "ClusterService"
+    },
+    {
+      "name": "HealthService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/clusters": {
+      "get": {
+        "summary": "ListClusters lists all clusters",
+        "operationId": "ClusterService_ListClusters",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListClustersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageSize",
+            "description": "Optional page size for pagination (future enhancement)",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "pageToken",
+            "description": "Optional page token for pagination (future enhancement)",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "post": {
+        "summary": "CreateCluster creates a new cluster",
+        "operationId": "ClusterService_CreateCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateClusterResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateClusterRequest"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/clusters/{id}": {
+      "get": {
+        "summary": "GetCluster retrieves a cluster by ID",
+        "operationId": "ClusterService_GetCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetClusterResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the cluster to retrieve",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "delete": {
+        "summary": "DeleteCluster deletes a cluster by ID",
+        "operationId": "ClusterService_DeleteCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteClusterResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the cluster to delete",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      },
+      "patch": {
+        "summary": "UpdateCluster updates an existing cluster",
+        "operationId": "ClusterService_UpdateCluster",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UpdateClusterResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the cluster to update",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ClusterServiceUpdateClusterBody"
+            }
+          }
+        ],
+        "tags": [
+          "ClusterService"
+        ]
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "summary": "Check returns the health status of the service",
+        "operationId": "HealthService_Check",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1HealthCheckResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "HealthService"
+        ]
+      }
+    },
+    "/api/v1/ready": {
+      "get": {
+        "summary": "Ready returns the readiness status of the service",
+        "operationId": "HealthService_Ready",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ReadinessCheckResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "HealthService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ClusterServiceUpdateClusterBody": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the cluster"
+        },
+        "description": {
+          "type": "string",
+          "title": "Description of the cluster"
+        },
+        "networkConfig": {
+          "$ref": "#/definitions/v1NetworkConfig",
+          "title": "Network configuration"
+        },
+        "updateMask": {
+          "type": "string",
+          "title": "Field mask to specify which fields to update"
+        }
+      },
+      "title": "UpdateClusterRequest contains parameters for updating a cluster"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Cluster": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Unique identifier for the cluster"
+        },
+        "name": {
+          "type": "string",
+          "title": "Human-readable name for the cluster"
+        },
+        "description": {
+          "type": "string",
+          "title": "Optional description of the cluster"
+        },
+        "networkConfig": {
+          "$ref": "#/definitions/v1NetworkConfig",
+          "title": "Network configuration for the cluster"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Last update timestamp"
+        }
+      },
+      "title": "Cluster represents a network cluster configuration"
+    },
+    "v1CreateClusterRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name of the cluster (required)"
+        },
+        "description": {
+          "type": "string",
+          "title": "Description of the cluster"
+        },
+        "networkConfig": {
+          "$ref": "#/definitions/v1NetworkConfig",
+          "title": "Network configuration (required)"
+        }
+      },
+      "title": "CreateClusterRequest contains parameters for creating a cluster"
+    },
+    "v1CreateClusterResponse": {
+      "type": "object",
+      "properties": {
+        "cluster": {
+          "$ref": "#/definitions/v1Cluster"
+        }
+      },
+      "title": "CreateClusterResponse returns the created cluster"
+    },
+    "v1DeleteClusterResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "title": "Whether the deletion was successful"
+        }
+      },
+      "title": "DeleteClusterResponse confirms deletion"
+    },
+    "v1GetClusterResponse": {
+      "type": "object",
+      "properties": {
+        "cluster": {
+          "$ref": "#/definitions/v1Cluster"
+        }
+      },
+      "title": "GetClusterResponse returns the requested cluster"
+    },
+    "v1HealthCheckResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/v1HealthStatus",
+          "title": "Overall health status"
+        },
+        "message": {
+          "type": "string",
+          "title": "Optional message providing additional context"
+        }
+      },
+      "title": "HealthCheckResponse contains health status information"
+    },
+    "v1HealthStatus": {
+      "type": "string",
+      "enum": [
+        "HEALTH_STATUS_UNSPECIFIED",
+        "HEALTH_STATUS_HEALTHY",
+        "HEALTH_STATUS_UNHEALTHY"
+      ],
+      "default": "HEALTH_STATUS_UNSPECIFIED",
+      "title": "HealthStatus represents the health state of the service"
+    },
+    "v1ListClustersResponse": {
+      "type": "object",
+      "properties": {
+        "clusters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Cluster"
+          },
+          "title": "List of clusters"
+        },
+        "nextPageToken": {
+          "type": "string",
+          "title": "Next page token for pagination (future enhancement)"
+        }
+      },
+      "title": "ListClustersResponse returns a list of clusters"
+    },
+    "v1NetworkConfig": {
+      "type": "object",
+      "properties": {
+        "cidr": {
+          "type": "string",
+          "title": "CIDR notation for the network (e.g., \"10.0.0.0/16\")"
+        },
+        "gateway": {
+          "type": "string",
+          "title": "Gateway IP address"
+        },
+        "dnsServers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "List of DNS server addresses"
+        },
+        "mtu": {
+          "type": "integer",
+          "format": "int32",
+          "title": "MTU (Maximum Transmission Unit) size"
+        }
+      },
+      "title": "NetworkConfig defines network settings for a cluster"
+    },
+    "v1ReadinessCheckResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/v1ReadinessStatus",
+          "title": "Overall readiness status"
+        },
+        "message": {
+          "type": "string",
+          "title": "Optional message providing additional context"
+        }
+      },
+      "title": "ReadinessCheckResponse contains readiness status information"
+    },
+    "v1ReadinessStatus": {
+      "type": "string",
+      "enum": [
+        "READINESS_STATUS_UNSPECIFIED",
+        "READINESS_STATUS_READY",
+        "READINESS_STATUS_NOT_READY"
+      ],
+      "default": "READINESS_STATUS_UNSPECIFIED",
+      "title": "ReadinessStatus represents the readiness state of the service"
+    },
+    "v1UpdateClusterResponse": {
+      "type": "object",
+      "properties": {
+        "cluster": {
+          "$ref": "#/definitions/v1Cluster"
+        }
+      },
+      "title": "UpdateClusterResponse returns the updated cluster"
+    }
+  }
+}

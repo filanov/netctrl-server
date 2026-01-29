@@ -1,0 +1,166 @@
+syntax = "proto3";
+
+package netctrl.v1;
+
+option go_package = "github.com/mfilanov/netctrl-server/pkg/api/v1;v1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+// ClusterService provides CRUD operations for managing clusters
+service ClusterService {
+  // CreateCluster creates a new cluster
+  rpc CreateCluster(CreateClusterRequest) returns (CreateClusterResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/clusters"
+      body: "*"
+    };
+  }
+
+  // GetCluster retrieves a cluster by ID
+  rpc GetCluster(GetClusterRequest) returns (GetClusterResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/clusters/{id}"
+    };
+  }
+
+  // ListClusters lists all clusters
+  rpc ListClusters(ListClustersRequest) returns (ListClustersResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/clusters"
+    };
+  }
+
+  // UpdateCluster updates an existing cluster
+  rpc UpdateCluster(UpdateClusterRequest) returns (UpdateClusterResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/clusters/{id}"
+      body: "*"
+    };
+  }
+
+  // DeleteCluster deletes a cluster by ID
+  rpc DeleteCluster(DeleteClusterRequest) returns (DeleteClusterResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/clusters/{id}"
+    };
+  }
+}
+
+// Cluster represents a network cluster configuration
+message Cluster {
+  // Unique identifier for the cluster
+  string id = 1;
+
+  // Human-readable name for the cluster
+  string name = 2;
+
+  // Optional description of the cluster
+  string description = 3;
+
+  // Network configuration for the cluster
+  NetworkConfig network_config = 4;
+
+  // Creation timestamp
+  google.protobuf.Timestamp created_at = 5;
+
+  // Last update timestamp
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+// NetworkConfig defines network settings for a cluster
+message NetworkConfig {
+  // CIDR notation for the network (e.g., "10.0.0.0/16")
+  string cidr = 1;
+
+  // Gateway IP address
+  string gateway = 2;
+
+  // List of DNS server addresses
+  repeated string dns_servers = 3;
+
+  // MTU (Maximum Transmission Unit) size
+  int32 mtu = 4;
+}
+
+// CreateClusterRequest contains parameters for creating a cluster
+message CreateClusterRequest {
+  // Name of the cluster (required)
+  string name = 1;
+
+  // Description of the cluster
+  string description = 2;
+
+  // Network configuration (required)
+  NetworkConfig network_config = 3;
+}
+
+// CreateClusterResponse returns the created cluster
+message CreateClusterResponse {
+  Cluster cluster = 1;
+}
+
+// GetClusterRequest contains parameters for retrieving a cluster
+message GetClusterRequest {
+  // ID of the cluster to retrieve
+  string id = 1;
+}
+
+// GetClusterResponse returns the requested cluster
+message GetClusterResponse {
+  Cluster cluster = 1;
+}
+
+// ListClustersRequest contains parameters for listing clusters
+message ListClustersRequest {
+  // Optional page size for pagination (future enhancement)
+  int32 page_size = 1;
+
+  // Optional page token for pagination (future enhancement)
+  string page_token = 2;
+}
+
+// ListClustersResponse returns a list of clusters
+message ListClustersResponse {
+  // List of clusters
+  repeated Cluster clusters = 1;
+
+  // Next page token for pagination (future enhancement)
+  string next_page_token = 2;
+}
+
+// UpdateClusterRequest contains parameters for updating a cluster
+message UpdateClusterRequest {
+  // ID of the cluster to update
+  string id = 1;
+
+  // Name of the cluster
+  string name = 2;
+
+  // Description of the cluster
+  string description = 3;
+
+  // Network configuration
+  NetworkConfig network_config = 4;
+
+  // Field mask to specify which fields to update
+  google.protobuf.FieldMask update_mask = 5;
+}
+
+// UpdateClusterResponse returns the updated cluster
+message UpdateClusterResponse {
+  Cluster cluster = 1;
+}
+
+// DeleteClusterRequest contains parameters for deleting a cluster
+message DeleteClusterRequest {
+  // ID of the cluster to delete
+  string id = 1;
+}
+
+// DeleteClusterResponse confirms deletion
+message DeleteClusterResponse {
+  // Whether the deletion was successful
+  bool success = 1;
+}
