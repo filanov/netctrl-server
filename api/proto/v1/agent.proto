@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+package netctrl.v1;
+
+option go_package = "github.com/mfilanov/netctrl-server/pkg/api/v1;v1";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+// AgentService provides operations for agent registration and management
+service AgentService {
+  // RegisterAgent registers or updates an agent to a cluster
+  rpc RegisterAgent(RegisterAgentRequest) returns (RegisterAgentResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/agents/register"
+      body: "*"
+    };
+  }
+
+  // GetAgent retrieves an agent by ID
+  rpc GetAgent(GetAgentRequest) returns (GetAgentResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/agents/{id}"
+    };
+  }
+
+  // ListAgents lists all agents, optionally filtered by cluster
+  rpc ListAgents(ListAgentsRequest) returns (ListAgentsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/agents"
+    };
+  }
+
+  // UnregisterAgent removes an agent
+  rpc UnregisterAgent(UnregisterAgentRequest) returns (UnregisterAgentResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/agents/{id}"
+    };
+  }
+}
+
+// AgentStatus represents the current state of an agent
+enum AgentStatus {
+  AGENT_STATUS_UNSPECIFIED = 0;
+  AGENT_STATUS_ACTIVE = 1;
+  AGENT_STATUS_INACTIVE = 2;
+}
+
+// Agent represents a node agent registered to a cluster
+message Agent {
+  // Agent-generated UUID (hardware-based identifier)
+  string id = 1;
+
+  // Cluster ID this agent belongs to
+  string cluster_id = 2;
+
+  // Node hostname
+  string hostname = 3;
+
+  // Node IP address
+  string ip_address = 4;
+
+  // Agent version
+  string version = 5;
+
+  // Agent status
+  AgentStatus status = 6;
+
+  // Last registration or update time
+  google.protobuf.Timestamp last_seen = 7;
+
+  // Creation timestamp
+  google.protobuf.Timestamp created_at = 8;
+
+  // Last update timestamp
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+// RegisterAgentRequest contains parameters for registering an agent
+message RegisterAgentRequest {
+  // Agent-generated UUID (required)
+  string id = 1;
+
+  // Cluster ID (required)
+  string cluster_id = 2;
+
+  // Node hostname (optional)
+  string hostname = 3;
+
+  // Node IP address (optional)
+  string ip_address = 4;
+
+  // Agent version (optional)
+  string version = 5;
+}
+
+// RegisterAgentResponse returns the registered agent
+message RegisterAgentResponse {
+  Agent agent = 1;
+}
+
+// GetAgentRequest contains parameters for retrieving an agent
+message GetAgentRequest {
+  // ID of the agent to retrieve
+  string id = 1;
+}
+
+// GetAgentResponse returns the requested agent
+message GetAgentResponse {
+  Agent agent = 1;
+}
+
+// ListAgentsRequest contains parameters for listing agents
+message ListAgentsRequest {
+  // Optional cluster ID filter
+  string cluster_id = 1;
+}
+
+// ListAgentsResponse returns a list of agents
+message ListAgentsResponse {
+  repeated Agent agents = 1;
+}
+
+// UnregisterAgentRequest contains parameters for unregistering an agent
+message UnregisterAgentRequest {
+  // ID of the agent to unregister
+  string id = 1;
+}
+
+// UnregisterAgentResponse confirms unregistration
+message UnregisterAgentResponse {
+  // Whether the unregistration was successful
+  bool success = 1;
+}

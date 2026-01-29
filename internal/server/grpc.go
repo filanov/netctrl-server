@@ -24,6 +24,7 @@ func (s *Server) startGRPCServer() error {
 
 	// Register services
 	v1.RegisterClusterServiceServer(grpcServer, s.clusterService)
+	v1.RegisterAgentServiceServer(grpcServer, s.agentService)
 	v1.RegisterHealthServiceServer(grpcServer, s.healthService)
 
 	// Enable reflection for grpcurl and other tools

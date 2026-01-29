@@ -32,6 +32,10 @@ func (s *Server) startGatewayServer() error {
 		return fmt.Errorf("failed to register cluster service handler: %w", err)
 	}
 
+	if err := v1.RegisterAgentServiceHandlerFromEndpoint(ctx, mux, grpcAddr, opts); err != nil {
+		return fmt.Errorf("failed to register agent service handler: %w", err)
+	}
+
 	if err := v1.RegisterHealthServiceHandlerFromEndpoint(ctx, mux, grpcAddr, opts); err != nil {
 		return fmt.Errorf("failed to register health service handler: %w", err)
 	}

@@ -18,6 +18,7 @@ type Server struct {
 	config         *config.Config
 	storage        storage.Storage
 	clusterService *service.ClusterService
+	agentService   *service.AgentService
 	healthService  *service.HealthService
 
 	grpcServer     *grpc.Server
@@ -31,6 +32,7 @@ func New(cfg *config.Config, storage storage.Storage) *Server {
 		config:         cfg,
 		storage:        storage,
 		clusterService: service.NewClusterService(storage),
+		agentService:   service.NewAgentService(storage),
 		healthService:  service.NewHealthService(),
 	}
 }

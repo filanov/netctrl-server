@@ -1,10 +1,13 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "v1/cluster.proto",
+    "title": "v1/agent.proto",
     "version": "version not set"
   },
   "tags": [
+    {
+      "name": "AgentService"
+    },
     {
       "name": "ClusterService"
     },
@@ -19,6 +22,133 @@
     "application/json"
   ],
   "paths": {
+    "/api/v1/agents": {
+      "get": {
+        "summary": "ListAgents lists all agents, optionally filtered by cluster",
+        "operationId": "AgentService_ListAgents",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListAgentsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "clusterId",
+            "description": "Optional cluster ID filter",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AgentService"
+        ]
+      }
+    },
+    "/api/v1/agents/register": {
+      "post": {
+        "summary": "RegisterAgent registers or updates an agent to a cluster",
+        "operationId": "AgentService_RegisterAgent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1RegisterAgentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1RegisterAgentRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AgentService"
+        ]
+      }
+    },
+    "/api/v1/agents/{id}": {
+      "get": {
+        "summary": "GetAgent retrieves an agent by ID",
+        "operationId": "AgentService_GetAgent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetAgentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the agent to retrieve",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AgentService"
+        ]
+      },
+      "delete": {
+        "summary": "UnregisterAgent removes an agent",
+        "operationId": "AgentService_UnregisterAgent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1UnregisterAgentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the agent to unregister",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "AgentService"
+        ]
+      }
+    },
     "/api/v1/clusters": {
       "get": {
         "summary": "ListClusters lists all clusters",
@@ -284,6 +414,61 @@
         }
       }
     },
+    "v1Agent": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Agent-generated UUID (hardware-based identifier)"
+        },
+        "clusterId": {
+          "type": "string",
+          "title": "Cluster ID this agent belongs to"
+        },
+        "hostname": {
+          "type": "string",
+          "title": "Node hostname"
+        },
+        "ipAddress": {
+          "type": "string",
+          "title": "Node IP address"
+        },
+        "version": {
+          "type": "string",
+          "title": "Agent version"
+        },
+        "status": {
+          "$ref": "#/definitions/v1AgentStatus",
+          "title": "Agent status"
+        },
+        "lastSeen": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Last registration or update time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Last update timestamp"
+        }
+      },
+      "title": "Agent represents a node agent registered to a cluster"
+    },
+    "v1AgentStatus": {
+      "type": "string",
+      "enum": [
+        "AGENT_STATUS_UNSPECIFIED",
+        "AGENT_STATUS_ACTIVE",
+        "AGENT_STATUS_INACTIVE"
+      ],
+      "default": "AGENT_STATUS_UNSPECIFIED",
+      "title": "AgentStatus represents the current state of an agent"
+    },
     "v1Cluster": {
       "type": "object",
       "properties": {
@@ -345,6 +530,15 @@
       },
       "title": "DeleteClusterResponse confirms deletion"
     },
+    "v1GetAgentResponse": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "$ref": "#/definitions/v1Agent"
+        }
+      },
+      "title": "GetAgentResponse returns the requested agent"
+    },
     "v1GetClusterResponse": {
       "type": "object",
       "properties": {
@@ -377,6 +571,19 @@
       ],
       "default": "HEALTH_STATUS_UNSPECIFIED",
       "title": "HealthStatus represents the health state of the service"
+    },
+    "v1ListAgentsResponse": {
+      "type": "object",
+      "properties": {
+        "agents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Agent"
+          }
+        }
+      },
+      "title": "ListAgentsResponse returns a list of agents"
     },
     "v1ListClustersResponse": {
       "type": "object",
@@ -419,6 +626,51 @@
       ],
       "default": "READINESS_STATUS_UNSPECIFIED",
       "title": "ReadinessStatus represents the readiness state of the service"
+    },
+    "v1RegisterAgentRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Agent-generated UUID (required)"
+        },
+        "clusterId": {
+          "type": "string",
+          "title": "Cluster ID (required)"
+        },
+        "hostname": {
+          "type": "string",
+          "title": "Node hostname (optional)"
+        },
+        "ipAddress": {
+          "type": "string",
+          "title": "Node IP address (optional)"
+        },
+        "version": {
+          "type": "string",
+          "title": "Agent version (optional)"
+        }
+      },
+      "title": "RegisterAgentRequest contains parameters for registering an agent"
+    },
+    "v1RegisterAgentResponse": {
+      "type": "object",
+      "properties": {
+        "agent": {
+          "$ref": "#/definitions/v1Agent"
+        }
+      },
+      "title": "RegisterAgentResponse returns the registered agent"
+    },
+    "v1UnregisterAgentResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "title": "Whether the unregistration was successful"
+        }
+      },
+      "title": "UnregisterAgentResponse confirms unregistration"
     },
     "v1UpdateClusterResponse": {
       "type": "object",
