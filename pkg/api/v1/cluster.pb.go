@@ -24,7 +24,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Cluster represents a network cluster configuration
+// Cluster represents a cluster configuration
 type Cluster struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique identifier for the cluster
@@ -33,12 +33,10 @@ type Cluster struct {
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Optional description of the cluster
 	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	// Network configuration for the cluster
-	NetworkConfig *NetworkConfig `protobuf:"bytes,4,opt,name=network_config,json=networkConfig,proto3" json:"network_config,omitempty"`
 	// Creation timestamp
-	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Last update timestamp
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -94,13 +92,6 @@ func (x *Cluster) GetDescription() string {
 	return ""
 }
 
-func (x *Cluster) GetNetworkConfig() *NetworkConfig {
-	if x != nil {
-		return x.NetworkConfig
-	}
-	return nil
-}
-
 func (x *Cluster) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
@@ -115,95 +106,20 @@ func (x *Cluster) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-// NetworkConfig defines network settings for a cluster
-type NetworkConfig struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// CIDR notation for the network (e.g., "10.0.0.0/16")
-	Cidr string `protobuf:"bytes,1,opt,name=cidr,proto3" json:"cidr,omitempty"`
-	// Gateway IP address
-	Gateway string `protobuf:"bytes,2,opt,name=gateway,proto3" json:"gateway,omitempty"`
-	// List of DNS server addresses
-	DnsServers []string `protobuf:"bytes,3,rep,name=dns_servers,json=dnsServers,proto3" json:"dns_servers,omitempty"`
-	// MTU (Maximum Transmission Unit) size
-	Mtu           int32 `protobuf:"varint,4,opt,name=mtu,proto3" json:"mtu,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *NetworkConfig) Reset() {
-	*x = NetworkConfig{}
-	mi := &file_v1_cluster_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *NetworkConfig) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*NetworkConfig) ProtoMessage() {}
-
-func (x *NetworkConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use NetworkConfig.ProtoReflect.Descriptor instead.
-func (*NetworkConfig) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *NetworkConfig) GetCidr() string {
-	if x != nil {
-		return x.Cidr
-	}
-	return ""
-}
-
-func (x *NetworkConfig) GetGateway() string {
-	if x != nil {
-		return x.Gateway
-	}
-	return ""
-}
-
-func (x *NetworkConfig) GetDnsServers() []string {
-	if x != nil {
-		return x.DnsServers
-	}
-	return nil
-}
-
-func (x *NetworkConfig) GetMtu() int32 {
-	if x != nil {
-		return x.Mtu
-	}
-	return 0
-}
-
 // CreateClusterRequest contains parameters for creating a cluster
 type CreateClusterRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Name of the cluster (required)
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Description of the cluster
-	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	// Network configuration (required)
-	NetworkConfig *NetworkConfig `protobuf:"bytes,3,opt,name=network_config,json=networkConfig,proto3" json:"network_config,omitempty"`
+	Description   string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateClusterRequest) Reset() {
 	*x = CreateClusterRequest{}
-	mi := &file_v1_cluster_proto_msgTypes[2]
+	mi := &file_v1_cluster_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -215,7 +131,7 @@ func (x *CreateClusterRequest) String() string {
 func (*CreateClusterRequest) ProtoMessage() {}
 
 func (x *CreateClusterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[2]
+	mi := &file_v1_cluster_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -228,7 +144,7 @@ func (x *CreateClusterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateClusterRequest.ProtoReflect.Descriptor instead.
 func (*CreateClusterRequest) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{2}
+	return file_v1_cluster_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CreateClusterRequest) GetName() string {
@@ -245,13 +161,6 @@ func (x *CreateClusterRequest) GetDescription() string {
 	return ""
 }
 
-func (x *CreateClusterRequest) GetNetworkConfig() *NetworkConfig {
-	if x != nil {
-		return x.NetworkConfig
-	}
-	return nil
-}
-
 // CreateClusterResponse returns the created cluster
 type CreateClusterResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -262,7 +171,7 @@ type CreateClusterResponse struct {
 
 func (x *CreateClusterResponse) Reset() {
 	*x = CreateClusterResponse{}
-	mi := &file_v1_cluster_proto_msgTypes[3]
+	mi := &file_v1_cluster_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -274,7 +183,7 @@ func (x *CreateClusterResponse) String() string {
 func (*CreateClusterResponse) ProtoMessage() {}
 
 func (x *CreateClusterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[3]
+	mi := &file_v1_cluster_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -287,7 +196,7 @@ func (x *CreateClusterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateClusterResponse.ProtoReflect.Descriptor instead.
 func (*CreateClusterResponse) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{3}
+	return file_v1_cluster_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateClusterResponse) GetCluster() *Cluster {
@@ -308,7 +217,7 @@ type GetClusterRequest struct {
 
 func (x *GetClusterRequest) Reset() {
 	*x = GetClusterRequest{}
-	mi := &file_v1_cluster_proto_msgTypes[4]
+	mi := &file_v1_cluster_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -320,7 +229,7 @@ func (x *GetClusterRequest) String() string {
 func (*GetClusterRequest) ProtoMessage() {}
 
 func (x *GetClusterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[4]
+	mi := &file_v1_cluster_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -333,7 +242,7 @@ func (x *GetClusterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClusterRequest.ProtoReflect.Descriptor instead.
 func (*GetClusterRequest) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{4}
+	return file_v1_cluster_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GetClusterRequest) GetId() string {
@@ -353,7 +262,7 @@ type GetClusterResponse struct {
 
 func (x *GetClusterResponse) Reset() {
 	*x = GetClusterResponse{}
-	mi := &file_v1_cluster_proto_msgTypes[5]
+	mi := &file_v1_cluster_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -365,7 +274,7 @@ func (x *GetClusterResponse) String() string {
 func (*GetClusterResponse) ProtoMessage() {}
 
 func (x *GetClusterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[5]
+	mi := &file_v1_cluster_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -378,7 +287,7 @@ func (x *GetClusterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetClusterResponse.ProtoReflect.Descriptor instead.
 func (*GetClusterResponse) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{5}
+	return file_v1_cluster_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetClusterResponse) GetCluster() *Cluster {
@@ -401,7 +310,7 @@ type ListClustersRequest struct {
 
 func (x *ListClustersRequest) Reset() {
 	*x = ListClustersRequest{}
-	mi := &file_v1_cluster_proto_msgTypes[6]
+	mi := &file_v1_cluster_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -413,7 +322,7 @@ func (x *ListClustersRequest) String() string {
 func (*ListClustersRequest) ProtoMessage() {}
 
 func (x *ListClustersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[6]
+	mi := &file_v1_cluster_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -426,7 +335,7 @@ func (x *ListClustersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListClustersRequest.ProtoReflect.Descriptor instead.
 func (*ListClustersRequest) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{6}
+	return file_v1_cluster_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ListClustersRequest) GetPageSize() int32 {
@@ -456,7 +365,7 @@ type ListClustersResponse struct {
 
 func (x *ListClustersResponse) Reset() {
 	*x = ListClustersResponse{}
-	mi := &file_v1_cluster_proto_msgTypes[7]
+	mi := &file_v1_cluster_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -468,7 +377,7 @@ func (x *ListClustersResponse) String() string {
 func (*ListClustersResponse) ProtoMessage() {}
 
 func (x *ListClustersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[7]
+	mi := &file_v1_cluster_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -481,7 +390,7 @@ func (x *ListClustersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListClustersResponse.ProtoReflect.Descriptor instead.
 func (*ListClustersResponse) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{7}
+	return file_v1_cluster_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListClustersResponse) GetClusters() []*Cluster {
@@ -507,17 +416,15 @@ type UpdateClusterRequest struct {
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Description of the cluster
 	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	// Network configuration
-	NetworkConfig *NetworkConfig `protobuf:"bytes,4,opt,name=network_config,json=networkConfig,proto3" json:"network_config,omitempty"`
 	// Field mask to specify which fields to update
-	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,5,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
+	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,4,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateClusterRequest) Reset() {
 	*x = UpdateClusterRequest{}
-	mi := &file_v1_cluster_proto_msgTypes[8]
+	mi := &file_v1_cluster_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -529,7 +436,7 @@ func (x *UpdateClusterRequest) String() string {
 func (*UpdateClusterRequest) ProtoMessage() {}
 
 func (x *UpdateClusterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[8]
+	mi := &file_v1_cluster_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -542,7 +449,7 @@ func (x *UpdateClusterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateClusterRequest.ProtoReflect.Descriptor instead.
 func (*UpdateClusterRequest) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{8}
+	return file_v1_cluster_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UpdateClusterRequest) GetId() string {
@@ -566,13 +473,6 @@ func (x *UpdateClusterRequest) GetDescription() string {
 	return ""
 }
 
-func (x *UpdateClusterRequest) GetNetworkConfig() *NetworkConfig {
-	if x != nil {
-		return x.NetworkConfig
-	}
-	return nil
-}
-
 func (x *UpdateClusterRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 	if x != nil {
 		return x.UpdateMask
@@ -590,7 +490,7 @@ type UpdateClusterResponse struct {
 
 func (x *UpdateClusterResponse) Reset() {
 	*x = UpdateClusterResponse{}
-	mi := &file_v1_cluster_proto_msgTypes[9]
+	mi := &file_v1_cluster_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -602,7 +502,7 @@ func (x *UpdateClusterResponse) String() string {
 func (*UpdateClusterResponse) ProtoMessage() {}
 
 func (x *UpdateClusterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[9]
+	mi := &file_v1_cluster_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -615,7 +515,7 @@ func (x *UpdateClusterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateClusterResponse.ProtoReflect.Descriptor instead.
 func (*UpdateClusterResponse) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{9}
+	return file_v1_cluster_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UpdateClusterResponse) GetCluster() *Cluster {
@@ -636,7 +536,7 @@ type DeleteClusterRequest struct {
 
 func (x *DeleteClusterRequest) Reset() {
 	*x = DeleteClusterRequest{}
-	mi := &file_v1_cluster_proto_msgTypes[10]
+	mi := &file_v1_cluster_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -648,7 +548,7 @@ func (x *DeleteClusterRequest) String() string {
 func (*DeleteClusterRequest) ProtoMessage() {}
 
 func (x *DeleteClusterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[10]
+	mi := &file_v1_cluster_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -661,7 +561,7 @@ func (x *DeleteClusterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteClusterRequest.ProtoReflect.Descriptor instead.
 func (*DeleteClusterRequest) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{10}
+	return file_v1_cluster_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteClusterRequest) GetId() string {
@@ -682,7 +582,7 @@ type DeleteClusterResponse struct {
 
 func (x *DeleteClusterResponse) Reset() {
 	*x = DeleteClusterResponse{}
-	mi := &file_v1_cluster_proto_msgTypes[11]
+	mi := &file_v1_cluster_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -694,7 +594,7 @@ func (x *DeleteClusterResponse) String() string {
 func (*DeleteClusterResponse) ProtoMessage() {}
 
 func (x *DeleteClusterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_cluster_proto_msgTypes[11]
+	mi := &file_v1_cluster_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -707,7 +607,7 @@ func (x *DeleteClusterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteClusterResponse.ProtoReflect.Descriptor instead.
 func (*DeleteClusterResponse) Descriptor() ([]byte, []int) {
-	return file_v1_cluster_proto_rawDescGZIP(), []int{11}
+	return file_v1_cluster_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DeleteClusterResponse) GetSuccess() bool {
@@ -722,26 +622,18 @@ var File_v1_cluster_proto protoreflect.FileDescriptor
 const file_v1_cluster_proto_rawDesc = "" +
 	"\n" +
 	"\x10v1/cluster.proto\x12\n" +
-	"netctrl.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\"\x87\x02\n" +
+	"netctrl.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\"\xc5\x01\n" +
 	"\aCluster\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12@\n" +
-	"\x0enetwork_config\x18\x04 \x01(\v2\x19.netctrl.v1.NetworkConfigR\rnetworkConfig\x129\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x129\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"p\n" +
-	"\rNetworkConfig\x12\x12\n" +
-	"\x04cidr\x18\x01 \x01(\tR\x04cidr\x12\x18\n" +
-	"\agateway\x18\x02 \x01(\tR\agateway\x12\x1f\n" +
-	"\vdns_servers\x18\x03 \x03(\tR\n" +
-	"dnsServers\x12\x10\n" +
-	"\x03mtu\x18\x04 \x01(\x05R\x03mtu\"\x8e\x01\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"L\n" +
 	"\x14CreateClusterRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\x12@\n" +
-	"\x0enetwork_config\x18\x03 \x01(\v2\x19.netctrl.v1.NetworkConfigR\rnetworkConfig\"F\n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\"F\n" +
 	"\x15CreateClusterResponse\x12-\n" +
 	"\acluster\x18\x01 \x01(\v2\x13.netctrl.v1.ClusterR\acluster\"#\n" +
 	"\x11GetClusterRequest\x12\x0e\n" +
@@ -754,13 +646,12 @@ const file_v1_cluster_proto_rawDesc = "" +
 	"page_token\x18\x02 \x01(\tR\tpageToken\"o\n" +
 	"\x14ListClustersResponse\x12/\n" +
 	"\bclusters\x18\x01 \x03(\v2\x13.netctrl.v1.ClusterR\bclusters\x12&\n" +
-	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\xdb\x01\n" +
+	"\x0fnext_page_token\x18\x02 \x01(\tR\rnextPageToken\"\x99\x01\n" +
 	"\x14UpdateClusterRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12@\n" +
-	"\x0enetwork_config\x18\x04 \x01(\v2\x19.netctrl.v1.NetworkConfigR\rnetworkConfig\x12;\n" +
-	"\vupdate_mask\x18\x05 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12;\n" +
+	"\vupdate_mask\x18\x04 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\"F\n" +
 	"\x15UpdateClusterResponse\x12-\n" +
 	"\acluster\x18\x01 \x01(\v2\x13.netctrl.v1.ClusterR\acluster\"&\n" +
@@ -791,49 +682,45 @@ func file_v1_cluster_proto_rawDescGZIP() []byte {
 	return file_v1_cluster_proto_rawDescData
 }
 
-var file_v1_cluster_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_v1_cluster_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_v1_cluster_proto_goTypes = []any{
 	(*Cluster)(nil),               // 0: netctrl.v1.Cluster
-	(*NetworkConfig)(nil),         // 1: netctrl.v1.NetworkConfig
-	(*CreateClusterRequest)(nil),  // 2: netctrl.v1.CreateClusterRequest
-	(*CreateClusterResponse)(nil), // 3: netctrl.v1.CreateClusterResponse
-	(*GetClusterRequest)(nil),     // 4: netctrl.v1.GetClusterRequest
-	(*GetClusterResponse)(nil),    // 5: netctrl.v1.GetClusterResponse
-	(*ListClustersRequest)(nil),   // 6: netctrl.v1.ListClustersRequest
-	(*ListClustersResponse)(nil),  // 7: netctrl.v1.ListClustersResponse
-	(*UpdateClusterRequest)(nil),  // 8: netctrl.v1.UpdateClusterRequest
-	(*UpdateClusterResponse)(nil), // 9: netctrl.v1.UpdateClusterResponse
-	(*DeleteClusterRequest)(nil),  // 10: netctrl.v1.DeleteClusterRequest
-	(*DeleteClusterResponse)(nil), // 11: netctrl.v1.DeleteClusterResponse
-	(*timestamppb.Timestamp)(nil), // 12: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil), // 13: google.protobuf.FieldMask
+	(*CreateClusterRequest)(nil),  // 1: netctrl.v1.CreateClusterRequest
+	(*CreateClusterResponse)(nil), // 2: netctrl.v1.CreateClusterResponse
+	(*GetClusterRequest)(nil),     // 3: netctrl.v1.GetClusterRequest
+	(*GetClusterResponse)(nil),    // 4: netctrl.v1.GetClusterResponse
+	(*ListClustersRequest)(nil),   // 5: netctrl.v1.ListClustersRequest
+	(*ListClustersResponse)(nil),  // 6: netctrl.v1.ListClustersResponse
+	(*UpdateClusterRequest)(nil),  // 7: netctrl.v1.UpdateClusterRequest
+	(*UpdateClusterResponse)(nil), // 8: netctrl.v1.UpdateClusterResponse
+	(*DeleteClusterRequest)(nil),  // 9: netctrl.v1.DeleteClusterRequest
+	(*DeleteClusterResponse)(nil), // 10: netctrl.v1.DeleteClusterResponse
+	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil), // 12: google.protobuf.FieldMask
 }
 var file_v1_cluster_proto_depIdxs = []int32{
-	1,  // 0: netctrl.v1.Cluster.network_config:type_name -> netctrl.v1.NetworkConfig
-	12, // 1: netctrl.v1.Cluster.created_at:type_name -> google.protobuf.Timestamp
-	12, // 2: netctrl.v1.Cluster.updated_at:type_name -> google.protobuf.Timestamp
-	1,  // 3: netctrl.v1.CreateClusterRequest.network_config:type_name -> netctrl.v1.NetworkConfig
-	0,  // 4: netctrl.v1.CreateClusterResponse.cluster:type_name -> netctrl.v1.Cluster
-	0,  // 5: netctrl.v1.GetClusterResponse.cluster:type_name -> netctrl.v1.Cluster
-	0,  // 6: netctrl.v1.ListClustersResponse.clusters:type_name -> netctrl.v1.Cluster
-	1,  // 7: netctrl.v1.UpdateClusterRequest.network_config:type_name -> netctrl.v1.NetworkConfig
-	13, // 8: netctrl.v1.UpdateClusterRequest.update_mask:type_name -> google.protobuf.FieldMask
-	0,  // 9: netctrl.v1.UpdateClusterResponse.cluster:type_name -> netctrl.v1.Cluster
-	2,  // 10: netctrl.v1.ClusterService.CreateCluster:input_type -> netctrl.v1.CreateClusterRequest
-	4,  // 11: netctrl.v1.ClusterService.GetCluster:input_type -> netctrl.v1.GetClusterRequest
-	6,  // 12: netctrl.v1.ClusterService.ListClusters:input_type -> netctrl.v1.ListClustersRequest
-	8,  // 13: netctrl.v1.ClusterService.UpdateCluster:input_type -> netctrl.v1.UpdateClusterRequest
-	10, // 14: netctrl.v1.ClusterService.DeleteCluster:input_type -> netctrl.v1.DeleteClusterRequest
-	3,  // 15: netctrl.v1.ClusterService.CreateCluster:output_type -> netctrl.v1.CreateClusterResponse
-	5,  // 16: netctrl.v1.ClusterService.GetCluster:output_type -> netctrl.v1.GetClusterResponse
-	7,  // 17: netctrl.v1.ClusterService.ListClusters:output_type -> netctrl.v1.ListClustersResponse
-	9,  // 18: netctrl.v1.ClusterService.UpdateCluster:output_type -> netctrl.v1.UpdateClusterResponse
-	11, // 19: netctrl.v1.ClusterService.DeleteCluster:output_type -> netctrl.v1.DeleteClusterResponse
-	15, // [15:20] is the sub-list for method output_type
-	10, // [10:15] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	11, // 0: netctrl.v1.Cluster.created_at:type_name -> google.protobuf.Timestamp
+	11, // 1: netctrl.v1.Cluster.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 2: netctrl.v1.CreateClusterResponse.cluster:type_name -> netctrl.v1.Cluster
+	0,  // 3: netctrl.v1.GetClusterResponse.cluster:type_name -> netctrl.v1.Cluster
+	0,  // 4: netctrl.v1.ListClustersResponse.clusters:type_name -> netctrl.v1.Cluster
+	12, // 5: netctrl.v1.UpdateClusterRequest.update_mask:type_name -> google.protobuf.FieldMask
+	0,  // 6: netctrl.v1.UpdateClusterResponse.cluster:type_name -> netctrl.v1.Cluster
+	1,  // 7: netctrl.v1.ClusterService.CreateCluster:input_type -> netctrl.v1.CreateClusterRequest
+	3,  // 8: netctrl.v1.ClusterService.GetCluster:input_type -> netctrl.v1.GetClusterRequest
+	5,  // 9: netctrl.v1.ClusterService.ListClusters:input_type -> netctrl.v1.ListClustersRequest
+	7,  // 10: netctrl.v1.ClusterService.UpdateCluster:input_type -> netctrl.v1.UpdateClusterRequest
+	9,  // 11: netctrl.v1.ClusterService.DeleteCluster:input_type -> netctrl.v1.DeleteClusterRequest
+	2,  // 12: netctrl.v1.ClusterService.CreateCluster:output_type -> netctrl.v1.CreateClusterResponse
+	4,  // 13: netctrl.v1.ClusterService.GetCluster:output_type -> netctrl.v1.GetClusterResponse
+	6,  // 14: netctrl.v1.ClusterService.ListClusters:output_type -> netctrl.v1.ListClustersResponse
+	8,  // 15: netctrl.v1.ClusterService.UpdateCluster:output_type -> netctrl.v1.UpdateClusterResponse
+	10, // 16: netctrl.v1.ClusterService.DeleteCluster:output_type -> netctrl.v1.DeleteClusterResponse
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_v1_cluster_proto_init() }
@@ -847,7 +734,7 @@ func file_v1_cluster_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_cluster_proto_rawDesc), len(file_v1_cluster_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

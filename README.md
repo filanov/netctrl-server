@@ -100,13 +100,7 @@ curl -X POST http://localhost:8080/api/v1/clusters \
   -H "Content-Type: application/json" \
   -d '{
     "name": "production-cluster",
-    "description": "Production environment cluster",
-    "network_config": {
-      "cidr": "10.0.0.0/16",
-      "gateway": "10.0.0.1",
-      "dns_servers": ["8.8.8.8", "8.8.4.4"],
-      "mtu": 1500
-    }
+    "description": "Production environment cluster"
   }'
 ```
 
@@ -129,12 +123,7 @@ curl -X PATCH http://localhost:8080/api/v1/clusters/{cluster-id} \
   -H "Content-Type: application/json" \
   -d '{
     "name": "updated-cluster-name",
-    "network_config": {
-      "cidr": "10.1.0.0/16",
-      "gateway": "10.1.0.1",
-      "dns_servers": ["1.1.1.1"],
-      "mtu": 9000
-    }
+    "description": "Updated description"
   }'
 ```
 
@@ -158,13 +147,7 @@ grpcurl -plaintext localhost:9090 netctrl.v1.HealthService/Check
 # Create a cluster
 grpcurl -plaintext -d '{
   "name": "production-cluster",
-  "description": "Production environment",
-  "network_config": {
-    "cidr": "10.0.0.0/16",
-    "gateway": "10.0.0.1",
-    "dns_servers": ["8.8.8.8"],
-    "mtu": 1500
-  }
+  "description": "Production environment"
 }' localhost:9090 netctrl.v1.ClusterService/CreateCluster
 
 # List clusters
@@ -256,14 +239,6 @@ make help
 3. Implement the service handlers in `internal/service/`
 4. Register the service in `internal/server/grpc.go`
 
-### Network Configuration Validation
-
-The server automatically validates:
-- **CIDR**: Must be valid CIDR notation (e.g., `10.0.0.0/16`)
-- **Gateway**: Must be a valid IP address
-- **DNS Servers**: Must be valid IP addresses
-- **MTU**: Must be between 576 and 9000
-
 ## Architecture
 
 ### Dual-Port Setup
@@ -295,12 +270,6 @@ The server listens for `SIGTERM` and `SIGINT` signals and performs graceful shut
   "id": "uuid-string",
   "name": "cluster-name",
   "description": "optional description",
-  "network_config": {
-    "cidr": "10.0.0.0/16",
-    "gateway": "10.0.0.1",
-    "dns_servers": ["8.8.8.8", "8.8.4.4"],
-    "mtu": 1500
-  },
   "created_at": "2025-01-29T10:00:00Z",
   "updated_at": "2025-01-29T10:00:00Z"
 }

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-netctrl-server is a Go server for templating cluster network settings. This is a new project using Go 1.23+.
+netctrl-server is a Go server for cluster management. This is a new project using Go 1.23+.
 
 ## Build Methodology
 
@@ -222,17 +222,16 @@ Using curl:
 curl http://localhost:8080/api/v1/health
 curl -X POST http://localhost:8080/api/v1/clusters \
   -H "Content-Type: application/json" \
-  -d '{"name":"test","description":"test cluster","network_config":{"cidr":"10.0.0.0/16","gateway":"10.0.0.1","dns_servers":["8.8.8.8"],"mtu":1500}}'
+  -d '{"name":"test","description":"test cluster"}'
 curl http://localhost:8080/api/v1/clusters
 ```
 
 ## Architecture Notes
 
-The server is designed to handle cluster network settings templating:
+The server is designed to handle cluster management:
 
-- Network configuration validation is enforced at the service layer
-- CIDR, gateway IPs, DNS servers are validated on create/update
-- MTU is constrained to 576-9000 range
 - Cluster IDs are auto-generated UUIDs
 - Timestamps are automatically managed
 - Graceful shutdown on SIGTERM/SIGINT for container environments
+- RESTful API with gRPC backend
+- Input validation at the service layer

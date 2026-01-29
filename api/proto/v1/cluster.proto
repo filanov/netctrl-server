@@ -48,7 +48,7 @@ service ClusterService {
   }
 }
 
-// Cluster represents a network cluster configuration
+// Cluster represents a cluster configuration
 message Cluster {
   // Unique identifier for the cluster
   string id = 1;
@@ -59,29 +59,11 @@ message Cluster {
   // Optional description of the cluster
   string description = 3;
 
-  // Network configuration for the cluster
-  NetworkConfig network_config = 4;
-
   // Creation timestamp
-  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp created_at = 4;
 
   // Last update timestamp
-  google.protobuf.Timestamp updated_at = 6;
-}
-
-// NetworkConfig defines network settings for a cluster
-message NetworkConfig {
-  // CIDR notation for the network (e.g., "10.0.0.0/16")
-  string cidr = 1;
-
-  // Gateway IP address
-  string gateway = 2;
-
-  // List of DNS server addresses
-  repeated string dns_servers = 3;
-
-  // MTU (Maximum Transmission Unit) size
-  int32 mtu = 4;
+  google.protobuf.Timestamp updated_at = 5;
 }
 
 // CreateClusterRequest contains parameters for creating a cluster
@@ -91,9 +73,6 @@ message CreateClusterRequest {
 
   // Description of the cluster
   string description = 2;
-
-  // Network configuration (required)
-  NetworkConfig network_config = 3;
 }
 
 // CreateClusterResponse returns the created cluster
@@ -141,11 +120,8 @@ message UpdateClusterRequest {
   // Description of the cluster
   string description = 3;
 
-  // Network configuration
-  NetworkConfig network_config = 4;
-
   // Field mask to specify which fields to update
-  google.protobuf.FieldMask update_mask = 5;
+  google.protobuf.FieldMask update_mask = 4;
 }
 
 // UpdateClusterResponse returns the updated cluster

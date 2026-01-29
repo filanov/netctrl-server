@@ -249,10 +249,6 @@
           "type": "string",
           "title": "Description of the cluster"
         },
-        "networkConfig": {
-          "$ref": "#/definitions/v1NetworkConfig",
-          "title": "Network configuration"
-        },
         "updateMask": {
           "type": "string",
           "title": "Field mask to specify which fields to update"
@@ -303,10 +299,6 @@
           "type": "string",
           "title": "Optional description of the cluster"
         },
-        "networkConfig": {
-          "$ref": "#/definitions/v1NetworkConfig",
-          "title": "Network configuration for the cluster"
-        },
         "createdAt": {
           "type": "string",
           "format": "date-time",
@@ -318,7 +310,7 @@
           "title": "Last update timestamp"
         }
       },
-      "title": "Cluster represents a network cluster configuration"
+      "title": "Cluster represents a cluster configuration"
     },
     "v1CreateClusterRequest": {
       "type": "object",
@@ -330,10 +322,6 @@
         "description": {
           "type": "string",
           "title": "Description of the cluster"
-        },
-        "networkConfig": {
-          "$ref": "#/definitions/v1NetworkConfig",
-          "title": "Network configuration (required)"
         }
       },
       "title": "CreateClusterRequest contains parameters for creating a cluster"
@@ -407,32 +395,6 @@
         }
       },
       "title": "ListClustersResponse returns a list of clusters"
-    },
-    "v1NetworkConfig": {
-      "type": "object",
-      "properties": {
-        "cidr": {
-          "type": "string",
-          "title": "CIDR notation for the network (e.g., \"10.0.0.0/16\")"
-        },
-        "gateway": {
-          "type": "string",
-          "title": "Gateway IP address"
-        },
-        "dnsServers": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "List of DNS server addresses"
-        },
-        "mtu": {
-          "type": "integer",
-          "format": "int32",
-          "title": "MTU (Maximum Transmission Unit) size"
-        }
-      },
-      "title": "NetworkConfig defines network settings for a cluster"
     },
     "v1ReadinessCheckResponse": {
       "type": "object",
