@@ -1,0 +1,84 @@
+run:
+  timeout: 5m
+  go: '1.25'
+
+linters:
+  enable:
+    - errcheck       # Check for unchecked errors
+    - gosimple       # Simplify code
+    - govet          # Vet examines Go source code
+    - ineffassign    # Detect ineffectual assignments
+    - staticcheck    # Go static analysis
+    - unused         # Check for unused constants, variables, functions
+    - gofmt          # Check formatting
+    - goimports      # Check import formatting
+    - misspell       # Fix commonly misspelled words
+    - revive         # Fast, configurable, extensible, flexible linter
+    - unconvert      # Remove unnecessary type conversions
+    - unparam        # Find unused function parameters
+    - gosec          # Security-focused linter
+    - bodyclose      # Check HTTP response body is closed
+    - gocritic       # Opinionated Go linter
+    - nilerr         # Check for nil errors being returned
+    - errname        # Check error naming conventions
+    - errorlint      # Find code that will cause problems with Go 1.13 error wrapping
+    - goconst        # Find repeated strings that could be constants
+    - gocyclo        # Computes cyclomatic complexity
+    - dupl           # Code clone detection
+    - prealloc       # Find slice declarations that could be preallocated
+
+linters-settings:
+  errcheck:
+    check-blank: true
+    check-type-assertions: true
+
+  govet:
+    enable-all: true
+
+  gocyclo:
+    min-complexity: 15
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - performance
+      - style
+    disabled-checks:
+      - commentedOutCode
+
+  revive:
+    rules:
+      - name: exported
+        disabled: false
+        arguments:
+          - checkPrivateReceivers
+          - disableStutteringCheck
+
+  gosec:
+    excludes:
+      - G404  # Use of weak random number generator (ok for non-crypto use)
+
+issues:
+  # Exclude generated code directories
+  exclude-dirs:
+    - pkg/api/v1
+
+  exclude-rules:
+    # Exclude some linters from running on tests files
+    - path: _test\.go
+      linters:
+        - errcheck
+        - dupl
+        - gosec
+        - gocritic
+
+    # Exclude generated files
+    - path: pkg/api/
+      linters:
+        - all
+
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+output:
+  sort-results: true

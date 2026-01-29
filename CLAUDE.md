@@ -4,70 +4,150 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-netctrl-server is a Go server for templating cluster network settings. This is a new project using Go 1.25.4.
+netctrl-server is a Go server for templating cluster network settings. This is a new project using Go 1.23+.
+
+## Build Methodology
+
+This project uses a **containerized build approach** with **split Docker containers** - all build, lint, test, and code generation operations run inside Docker containers. This ensures:
+- Consistent build environments across all machines
+- No need to install Go, buf, golangci-lint, or other tools locally
+- Elimination of "works on my machine" issues
+- Reproducible builds for CI/CD
+- Clear separation between development and production environments
+
+### Docker Architecture
+
+Two dedicated Dockerfiles:
+- **`Dockerfile.dev`** (~2.25GB) - Development container with all tools
+- **`Dockerfile.prod`** (~22.4MB) - Minimal production container
+
+### Prerequisites
+
+**Required:**
+- Docker (20.10+)
+
+**Optional (for native execution):**
+- Go 1.25+
+- buf CLI
+- golangci-lint
+
+If Docker is not available, the Makefile automatically falls back to local tool execution.
 
 ## Development Commands
 
-### Protocol Buffers
+### Quick Start
 ```bash
-make proto                        # Generate Go code from proto files
-buf generate                      # Alternative: direct buf command
-buf lint                          # Lint proto files
-buf breaking --against '.git#branch=main'  # Check for breaking changes
+# First-time setup - build the development Docker image
+make docker-build-dev
+
+# Standard workflow (runs in Docker automatically)
+make build                        # Build the binary
+make test                         # Run tests
+make lint                         # Run linters (golangci-lint + go vet)
+make run                          # Build and run the server
 ```
 
-### Building
+### Docker-Based Workflow (Recommended)
+
+All standard `make` commands automatically use Docker if available. The Makefile will build the dev image on first use.
+
+#### Building & Running
 ```bash
-make build                        # Generate proto and build binary
+make build                        # Build binary in container, output to bin/
 make all                          # Clean, deps, proto, and build
-go build -o bin/netctrl-server ./cmd/server  # Direct build
+make run                          # Build and run the server locally
+make docker-run                   # Run server in production container
 ```
 
-### Testing
+#### Docker Image Management
+```bash
+make docker-build-dev             # Build development image (with all tools)
+make docker-build-prod            # Build production image (multi-stage, minimal)
+make docker-shell                 # Open interactive shell in dev container
+make docker-clean                 # Remove Docker images
+```
+
+#### Protocol Buffers
+```bash
+make proto                        # Generate Go code from proto files (in container)
+```
+
+#### Testing
+```bash
+make test                         # Run all tests in container
+make test-race                    # Run tests with race detector in container
+make coverage                     # Generate coverage report in container
+```
+
+#### Code Quality
+```bash
+make lint                         # Run golangci-lint + go vet in container
+make fmt                          # Format all Go code in container
+```
+
+#### Dependency Management
+```bash
+make deps                         # Download and tidy dependencies
+make tidy                         # Tidy go.mod and go.sum
+```
+
+### Native/Local Workflow (Optional)
+
+If you have Go and tools installed locally, you can bypass Docker:
+
+```bash
+make build-local                  # Build using local Go
+make proto-local                  # Generate proto using local buf
+make test-local                   # Run tests using local Go
+make lint-local                   # Lint using local tools
+make fmt-local                    # Format using local Go
+```
+
+Or run Go commands directly:
 ```bash
 go test ./...                     # Run all tests
-go test -v ./...                  # Run all tests with verbose output
-go test -race ./...               # Run tests with race detector
-go test -cover ./...              # Run tests with coverage
-go test -coverprofile=coverage.out ./...  # Generate coverage profile
-go tool cover -html=coverage.out         # View coverage in browser
-go test ./path/to/package         # Run tests for a specific package
-go test -run TestName ./...       # Run a specific test by name
+go test -v ./...                  # Verbose output
+go test -race ./...               # Race detector
+go test -cover ./...              # Coverage
+buf generate                      # Generate proto
+buf lint                          # Lint proto files
+golangci-lint run ./...           # Run comprehensive linter
 ```
 
-### Code Quality
+### Make Targets Reference
 ```bash
-go fmt ./...                      # Format all Go code
-go vet ./...                      # Run static analysis
-go mod tidy                       # Clean up go.mod and go.sum
-go mod verify                     # Verify dependencies
+make help                         # Show all available targets with descriptions
 ```
 
-### Dependency Management
+### Troubleshooting
+
+#### Docker Issues
 ```bash
-go get <package>                  # Add a dependency
-go get -u <package>               # Update a dependency
-go mod download                   # Download dependencies
+# If Docker image is outdated or corrupted
+make docker-clean
+make docker-build-dev
+
+# Check Docker is running
+docker ps
+
+# View container logs during build
+make build                        # Will show output from container
 ```
 
-### Running
+#### Permission Issues
 ```bash
-make run                          # Build and run the server
-go run ./cmd/server               # Run without building first (requires proto generation)
-./bin/netctrl-server              # Run the built binary directly
+# If generated files have wrong permissions
+sudo chown -R $USER:$USER .
 ```
 
-### Make Targets
+#### Build Cache Issues
 ```bash
-make help                         # Show all available targets
-make clean                        # Remove build artifacts
-make deps                         # Download and tidy dependencies
-make test                         # Run tests
-make test-race                    # Run tests with race detector
-make coverage                     # Generate and view coverage report
-make lint                         # Run linters (go vet)
-make fmt                          # Format code
-make tidy                         # Tidy go.mod
+# Clear Docker build cache
+docker builder prune
+
+# Clear Go module cache
+rm -rf ~/go/pkg
+rm -rf ~/.cache/go-build
 ```
 
 ## Project Structure

@@ -15,28 +15,58 @@ A high-performance gRPC server with REST API gateway for managing cluster networ
 
 ### Prerequisites
 
-- Go 1.25.4 or higher
-- buf CLI (auto-installed via `go install`)
+**Required:**
+- [Docker](https://docs.docker.com/get-docker/) (20.10+)
 
-### Installation
+**Optional (for native development):**
+- Go 1.23+
+- [buf](https://buf.build/docs/installation)
+- [golangci-lint](https://golangci-lint.run/welcome/install/)
+
+### Quick Start with Docker
+
+```bash
+# Build the production image
+make docker-build-prod
+
+# Run the server
+make docker-run
+
+# Or use docker directly
+docker run -p 8080:8080 -p 9090:9090 netctrl-server:latest
+```
+
+### Development with Docker
+
+```bash
+# Build development image (includes all build tools)
+make docker-build-dev
+
+# Standard workflow - all commands run in containers
+make build        # Build binary
+make test         # Run tests
+make lint         # Run linters
+make proto        # Generate protobuf code
+
+# Open shell in dev container for debugging
+make docker-shell
+```
+
+### Native Development (Optional)
+
+If you have Go installed locally:
 
 ```bash
 # Clone the repository
 git clone <repository-url>
 cd netctrl-server
 
-# Download dependencies and build
-make all
-```
+# Generate protobuf code
+make proto
 
-### Running the Server
-
-```bash
-# Using make
+# Build and run
+make build
 make run
-
-# Or directly
-./bin/netctrl-server
 ```
 
 The server will start with:
@@ -139,6 +169,42 @@ grpcurl -plaintext -d '{
 
 # List clusters
 grpcurl -plaintext localhost:9090 netctrl.v1.ClusterService/ListClusters
+```
+
+## Build Methodology
+
+This project uses **split containerized builds** for clarity and efficiency:
+
+- **Dedicated containers** - Separate `Dockerfile.dev` and `Dockerfile.prod` for development and production
+- **No local tools needed** - All operations run in Docker (Go, buf, golangci-lint)
+- **Automatic fallback** - Makefile detects if Docker is unavailable and uses local tools
+- **Volume mounts** - Fast development iteration without rebuilding images
+- **Comprehensive linting** - golangci-lint with 20+ enabled linters
+
+### Docker Images
+
+Two dedicated images from separate Dockerfiles:
+
+1. **Development image** (`netctrl-server:dev` from `Dockerfile.dev`):
+   - Size: ~2.25GB
+   - Purpose: Building, testing, linting, proto generation
+   - Contains: Go 1.25.4, buf, golangci-lint, all dev tools
+
+2. **Production image** (`netctrl-server:latest` from `Dockerfile.prod`):
+   - Size: ~22.4MB (99% smaller!)
+   - Purpose: Production deployment only
+   - Contains: Minimal Alpine + compiled binary + non-root user
+
+### Workflow
+
+```bash
+# All standard commands use Docker automatically
+make build        # Runs: docker run ... go build ...
+make test         # Runs: docker run ... go test ...
+make lint         # Runs: docker run ... golangci-lint ...
+
+# Or use native tools with -local suffix
+make build-local  # Uses local Go installation
 ```
 
 ## Development

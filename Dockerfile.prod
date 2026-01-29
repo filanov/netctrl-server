@@ -1,0 +1,87 @@
+# Production Dockerfile for netctrl-server
+# Multi-stage build: builder + minimal runtime
+# Used for: production deployment only
+
+# ============================================================================
+# Stage 1: Builder
+# ============================================================================
+FROM golang:1.23-alpine AS builder
+
+LABEL maintainer="netctrl-server"
+LABEL description="Builder stage for production binary"
+
+# Install build dependencies
+RUN apk add --no-cache \
+    git \
+    make \
+    ca-certificates \
+    protobuf-dev
+
+# Set GOTOOLCHAIN to auto to allow Go to download the required version
+ENV GOTOOLCHAIN=auto
+
+# Set working directory
+WORKDIR /workspace
+
+# Copy go mod files and download dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Install buf for protobuf generation
+RUN GOTOOLCHAIN=go1.25.4 go install github.com/bufbuild/buf/cmd/buf@v1.47.2
+
+# Copy source code
+COPY buf.yaml buf.gen.yaml buf.lock ./
+COPY api/ api/
+COPY cmd/ cmd/
+COPY internal/ internal/
+
+# Generate proto files
+RUN buf generate
+
+# Build the binary with optimizations for production
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags='-w -s -extldflags "-static"' \
+    -a \
+    -o /bin/netctrl-server \
+    ./cmd/server
+
+# Verify the binary was built
+RUN test -f /bin/netctrl-server
+
+# ============================================================================
+# Stage 2: Runtime (Production)
+# ============================================================================
+FROM alpine:3.21
+
+LABEL maintainer="netctrl-server"
+LABEL description="Production runtime with minimal footprint"
+
+# Install runtime dependencies
+RUN apk add --no-cache ca-certificates tzdata
+
+# Create non-root user for security
+RUN addgroup -g 1000 -S netctrl && \
+    adduser -u 1000 -S netctrl -G netctrl
+
+# Create application directory
+RUN mkdir -p /app && chown netctrl:netctrl /app
+
+# Copy binary from builder
+COPY --from=builder --chown=netctrl:netctrl /bin/netctrl-server /app/netctrl-server
+
+# Switch to non-root user
+USER netctrl
+
+# Set working directory
+WORKDIR /app
+
+# Expose gRPC and HTTP ports
+EXPOSE 8080 9090
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/v1/health || exit 1
+
+# Run the server
+CMD ["./netctrl-server"]
