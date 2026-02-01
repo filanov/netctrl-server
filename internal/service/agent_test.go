@@ -280,4 +280,92 @@ var _ = Describe("AgentService", func() {
 			Expect(st.Code()).To(Equal(codes.InvalidArgument))
 		})
 	})
+
+	Describe("GetInstructions", func() {
+		var agentId string
+
+		BeforeEach(func() {
+			// Register an agent for testing
+			registerReq := &v1.RegisterAgentRequest{
+				Id:        "agent-1",
+				ClusterId: testClusterId,
+				Hostname:  "node1",
+				IpAddress: "10.0.1.1",
+				Version:   "1.0.0",
+			}
+			resp, err := agentService.RegisterAgent(ctx, registerReq)
+			Expect(err).NotTo(HaveOccurred())
+			agentId = resp.Agent.Id
+		})
+
+		It("should return instructions with poll interval", func() {
+			req := &v1.GetInstructionsRequest{
+				AgentId: agentId,
+			}
+
+			resp, err := agentService.GetInstructions(ctx, req)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(resp).NotTo(BeNil())
+			Expect(resp.Instructions).To(BeEmpty()) // Initially no instructions
+			Expect(resp.PollIntervalSeconds).To(Equal(int32(60)))
+			Expect(resp.ServerTime).NotTo(BeNil())
+		})
+
+		It("should update agent's last_seen timestamp", func() {
+			// Get agent's initial last_seen
+			getReq := &v1.GetAgentRequest{Id: agentId}
+			getResp, err := agentService.GetAgent(ctx, getReq)
+			Expect(err).NotTo(HaveOccurred())
+			initialLastSeen := getResp.Agent.LastSeen
+
+			// Call GetInstructions
+			instructionsReq := &v1.GetInstructionsRequest{
+				AgentId: agentId,
+			}
+			_, err = agentService.GetInstructions(ctx, instructionsReq)
+			Expect(err).NotTo(HaveOccurred())
+
+			// Verify last_seen was updated
+			getResp2, err := agentService.GetAgent(ctx, getReq)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(getResp2.Agent.LastSeen.AsTime()).To(BeTemporally(">=", initialLastSeen.AsTime()))
+			Expect(getResp2.Agent.Status).To(Equal(v1.AgentStatus_AGENT_STATUS_ACTIVE))
+		})
+
+		It("should return error for non-existent agent", func() {
+			req := &v1.GetInstructionsRequest{
+				AgentId: "non-existent",
+			}
+
+			_, err := agentService.GetInstructions(ctx, req)
+			Expect(err).To(HaveOccurred())
+			st, ok := status.FromError(err)
+			Expect(ok).To(BeTrue())
+			Expect(st.Code()).To(Equal(codes.NotFound))
+		})
+
+		It("should return error when agent ID is empty", func() {
+			req := &v1.GetInstructionsRequest{
+				AgentId: "",
+			}
+
+			_, err := agentService.GetInstructions(ctx, req)
+			Expect(err).To(HaveOccurred())
+			st, ok := status.FromError(err)
+			Expect(ok).To(BeTrue())
+			Expect(st.Code()).To(Equal(codes.InvalidArgument))
+		})
+
+		It("should accept last instruction ID and result data", func() {
+			req := &v1.GetInstructionsRequest{
+				AgentId:            agentId,
+				LastInstructionId:  "instruction-123",
+				ResultData:         `{"status": "success"}`,
+			}
+
+			resp, err := agentService.GetInstructions(ctx, req)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(resp).NotTo(BeNil())
+		})
+	})
 })

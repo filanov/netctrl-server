@@ -128,6 +128,51 @@ func (s *AgentService) UnregisterAgent(ctx context.Context, req *v1.UnregisterAg
 	}, nil
 }
 
+// GetInstructions polls for pending instructions and updates agent heartbeat
+func (s *AgentService) GetInstructions(ctx context.Context, req *v1.GetInstructionsRequest) (*v1.GetInstructionsResponse, error) {
+	if req.AgentId == "" {
+		return nil, status.Error(codes.InvalidArgument, "agent ID is required")
+	}
+
+	// Verify agent exists and update last_seen (implicit heartbeat)
+	agent, err := s.storage.GetAgent(ctx, req.AgentId)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, fmt.Sprintf("agent not found: %s", req.AgentId))
+	}
+
+	// Update agent's last_seen timestamp and set status to active
+	now := timestamppb.Now()
+	agent.LastSeen = now
+	agent.UpdatedAt = now
+	agent.Status = v1.AgentStatus_AGENT_STATUS_ACTIVE
+
+	if err := s.storage.UpdateAgent(ctx, agent); err != nil {
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to update agent heartbeat: %v", err))
+	}
+
+	// Generate instructions for the agent
+	instructions := s.generateInstructions(agent)
+
+	// Return instructions with default poll interval
+	return &v1.GetInstructionsResponse{
+		Instructions:        instructions,
+		PollIntervalSeconds: 60, // Default: poll every 60 seconds (1 minute)
+		ServerTime:          now,
+	}, nil
+}
+
+// generateInstructions creates instructions for an agent based on its state
+func (s *AgentService) generateInstructions(agent *v1.Agent) []*v1.Instruction {
+	// For now, return empty instructions list
+	// In the future, this is where you would:
+	// - Check for pending commands
+	// - Request health checks
+	// - Send configuration updates
+	// - etc.
+
+	return []*v1.Instruction{}
+}
+
 // validateRegisterRequest validates the agent registration request
 func (s *AgentService) validateRegisterRequest(req *v1.RegisterAgentRequest) error {
 	if req.Id == "" {

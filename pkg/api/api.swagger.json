@@ -87,6 +87,46 @@
         ]
       }
     },
+    "/api/v1/agents/{agentId}/instructions": {
+      "post": {
+        "summary": "GetInstructions polls for pending instructions\nThis serves as both instruction delivery and implicit healthcheck",
+        "operationId": "AgentService_GetInstructions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetInstructionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "agentId",
+            "description": "ID of the agent requesting instructions",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AgentServiceGetInstructionsBody"
+            }
+          }
+        ],
+        "tags": [
+          "AgentService"
+        ]
+      }
+    },
     "/api/v1/agents/{id}": {
       "get": {
         "summary": "GetAgent retrieves an agent by ID",
@@ -368,6 +408,20 @@
     }
   },
   "definitions": {
+    "AgentServiceGetInstructionsBody": {
+      "type": "object",
+      "properties": {
+        "lastInstructionId": {
+          "type": "string",
+          "title": "Optional: ID of the last successfully processed instruction (acknowledgment)"
+        },
+        "resultData": {
+          "type": "string",
+          "title": "Optional: Result data from the last instruction execution"
+        }
+      },
+      "title": "GetInstructionsRequest requests pending instructions for an agent"
+    },
     "ClusterServiceUpdateClusterBody": {
       "type": "object",
       "properties": {
@@ -548,6 +602,30 @@
       },
       "title": "GetClusterResponse returns the requested cluster"
     },
+    "v1GetInstructionsResponse": {
+      "type": "object",
+      "properties": {
+        "instructions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Instruction"
+          },
+          "title": "List of pending instructions to execute"
+        },
+        "pollIntervalSeconds": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Seconds to wait before the next poll\nDefault behavior: agent should poll after this interval"
+        },
+        "serverTime": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Server timestamp when response was generated"
+        }
+      },
+      "title": "GetInstructionsResponse returns instructions and polling configuration"
+    },
     "v1HealthCheckResponse": {
       "type": "object",
       "properties": {
@@ -571,6 +649,40 @@
       ],
       "default": "HEALTH_STATUS_UNSPECIFIED",
       "title": "HealthStatus represents the health state of the service"
+    },
+    "v1Instruction": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "Unique instruction ID"
+        },
+        "type": {
+          "$ref": "#/definitions/v1InstructionType",
+          "title": "Type of instruction"
+        },
+        "payload": {
+          "type": "string",
+          "title": "Instruction payload (type-specific data as JSON)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "title": "When the instruction was created"
+        }
+      },
+      "title": "Instruction represents a command or directive from the service to an agent"
+    },
+    "v1InstructionType": {
+      "type": "string",
+      "enum": [
+        "INSTRUCTION_TYPE_UNSPECIFIED",
+        "INSTRUCTION_TYPE_POLL_INTERVAL",
+        "INSTRUCTION_TYPE_HEALTH_CHECK"
+      ],
+      "default": "INSTRUCTION_TYPE_UNSPECIFIED",
+      "description": "- INSTRUCTION_TYPE_POLL_INTERVAL: POLL_INTERVAL instructs the agent when to poll next\n - INSTRUCTION_TYPE_HEALTH_CHECK: HEALTH_CHECK requests a health status report",
+      "title": "InstructionType defines the type of instruction"
     },
     "v1ListAgentsResponse": {
       "type": "object",

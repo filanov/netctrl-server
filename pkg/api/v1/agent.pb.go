@@ -73,6 +73,58 @@ func (AgentStatus) EnumDescriptor() ([]byte, []int) {
 	return file_v1_agent_proto_rawDescGZIP(), []int{0}
 }
 
+// InstructionType defines the type of instruction
+type InstructionType int32
+
+const (
+	InstructionType_INSTRUCTION_TYPE_UNSPECIFIED InstructionType = 0
+	// POLL_INTERVAL instructs the agent when to poll next
+	InstructionType_INSTRUCTION_TYPE_POLL_INTERVAL InstructionType = 1
+	// HEALTH_CHECK requests a health status report
+	InstructionType_INSTRUCTION_TYPE_HEALTH_CHECK InstructionType = 2
+)
+
+// Enum value maps for InstructionType.
+var (
+	InstructionType_name = map[int32]string{
+		0: "INSTRUCTION_TYPE_UNSPECIFIED",
+		1: "INSTRUCTION_TYPE_POLL_INTERVAL",
+		2: "INSTRUCTION_TYPE_HEALTH_CHECK",
+	}
+	InstructionType_value = map[string]int32{
+		"INSTRUCTION_TYPE_UNSPECIFIED":   0,
+		"INSTRUCTION_TYPE_POLL_INTERVAL": 1,
+		"INSTRUCTION_TYPE_HEALTH_CHECK":  2,
+	}
+)
+
+func (x InstructionType) Enum() *InstructionType {
+	p := new(InstructionType)
+	*p = x
+	return p
+}
+
+func (x InstructionType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InstructionType) Descriptor() protoreflect.EnumDescriptor {
+	return file_v1_agent_proto_enumTypes[1].Descriptor()
+}
+
+func (InstructionType) Type() protoreflect.EnumType {
+	return &file_v1_agent_proto_enumTypes[1]
+}
+
+func (x InstructionType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InstructionType.Descriptor instead.
+func (InstructionType) EnumDescriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{1}
+}
+
 // Agent represents a node agent registered to a cluster
 type Agent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -592,6 +644,208 @@ func (x *UnregisterAgentResponse) GetSuccess() bool {
 	return false
 }
 
+// Instruction represents a command or directive from the service to an agent
+type Instruction struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique instruction ID
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Type of instruction
+	Type InstructionType `protobuf:"varint,2,opt,name=type,proto3,enum=netctrl.v1.InstructionType" json:"type,omitempty"`
+	// Instruction payload (type-specific data as JSON)
+	Payload string `protobuf:"bytes,3,opt,name=payload,proto3" json:"payload,omitempty"`
+	// When the instruction was created
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Instruction) Reset() {
+	*x = Instruction{}
+	mi := &file_v1_agent_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Instruction) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Instruction) ProtoMessage() {}
+
+func (x *Instruction) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_agent_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Instruction.ProtoReflect.Descriptor instead.
+func (*Instruction) Descriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *Instruction) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Instruction) GetType() InstructionType {
+	if x != nil {
+		return x.Type
+	}
+	return InstructionType_INSTRUCTION_TYPE_UNSPECIFIED
+}
+
+func (x *Instruction) GetPayload() string {
+	if x != nil {
+		return x.Payload
+	}
+	return ""
+}
+
+func (x *Instruction) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+// GetInstructionsRequest requests pending instructions for an agent
+type GetInstructionsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the agent requesting instructions
+	AgentId string `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
+	// Optional: ID of the last successfully processed instruction (acknowledgment)
+	LastInstructionId string `protobuf:"bytes,2,opt,name=last_instruction_id,json=lastInstructionId,proto3" json:"last_instruction_id,omitempty"`
+	// Optional: Result data from the last instruction execution
+	ResultData    string `protobuf:"bytes,3,opt,name=result_data,json=resultData,proto3" json:"result_data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInstructionsRequest) Reset() {
+	*x = GetInstructionsRequest{}
+	mi := &file_v1_agent_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInstructionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInstructionsRequest) ProtoMessage() {}
+
+func (x *GetInstructionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_agent_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInstructionsRequest.ProtoReflect.Descriptor instead.
+func (*GetInstructionsRequest) Descriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetInstructionsRequest) GetAgentId() string {
+	if x != nil {
+		return x.AgentId
+	}
+	return ""
+}
+
+func (x *GetInstructionsRequest) GetLastInstructionId() string {
+	if x != nil {
+		return x.LastInstructionId
+	}
+	return ""
+}
+
+func (x *GetInstructionsRequest) GetResultData() string {
+	if x != nil {
+		return x.ResultData
+	}
+	return ""
+}
+
+// GetInstructionsResponse returns instructions and polling configuration
+type GetInstructionsResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// List of pending instructions to execute
+	Instructions []*Instruction `protobuf:"bytes,1,rep,name=instructions,proto3" json:"instructions,omitempty"`
+	// Seconds to wait before the next poll
+	// Default behavior: agent should poll after this interval
+	PollIntervalSeconds int32 `protobuf:"varint,2,opt,name=poll_interval_seconds,json=pollIntervalSeconds,proto3" json:"poll_interval_seconds,omitempty"`
+	// Server timestamp when response was generated
+	ServerTime    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=server_time,json=serverTime,proto3" json:"server_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetInstructionsResponse) Reset() {
+	*x = GetInstructionsResponse{}
+	mi := &file_v1_agent_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetInstructionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetInstructionsResponse) ProtoMessage() {}
+
+func (x *GetInstructionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_agent_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetInstructionsResponse.ProtoReflect.Descriptor instead.
+func (*GetInstructionsResponse) Descriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetInstructionsResponse) GetInstructions() []*Instruction {
+	if x != nil {
+		return x.Instructions
+	}
+	return nil
+}
+
+func (x *GetInstructionsResponse) GetPollIntervalSeconds() int32 {
+	if x != nil {
+		return x.PollIntervalSeconds
+	}
+	return 0
+}
+
+func (x *GetInstructionsResponse) GetServerTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ServerTime
+	}
+	return nil
+}
+
 var File_v1_agent_proto protoreflect.FileDescriptor
 
 const file_v1_agent_proto_rawDesc = "" +
@@ -634,17 +888,38 @@ const file_v1_agent_proto_rawDesc = "" +
 	"\x16UnregisterAgentRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"3\n" +
 	"\x17UnregisterAgentResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess*_\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xa3\x01\n" +
+	"\vInstruction\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12/\n" +
+	"\x04type\x18\x02 \x01(\x0e2\x1b.netctrl.v1.InstructionTypeR\x04type\x12\x18\n" +
+	"\apayload\x18\x03 \x01(\tR\apayload\x129\n" +
+	"\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x84\x01\n" +
+	"\x16GetInstructionsRequest\x12\x19\n" +
+	"\bagent_id\x18\x01 \x01(\tR\aagentId\x12.\n" +
+	"\x13last_instruction_id\x18\x02 \x01(\tR\x11lastInstructionId\x12\x1f\n" +
+	"\vresult_data\x18\x03 \x01(\tR\n" +
+	"resultData\"\xc7\x01\n" +
+	"\x17GetInstructionsResponse\x12;\n" +
+	"\finstructions\x18\x01 \x03(\v2\x17.netctrl.v1.InstructionR\finstructions\x122\n" +
+	"\x15poll_interval_seconds\x18\x02 \x01(\x05R\x13pollIntervalSeconds\x12;\n" +
+	"\vserver_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"serverTime*_\n" +
 	"\vAgentStatus\x12\x1c\n" +
 	"\x18AGENT_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13AGENT_STATUS_ACTIVE\x10\x01\x12\x19\n" +
-	"\x15AGENT_STATUS_INACTIVE\x10\x022\xca\x03\n" +
+	"\x15AGENT_STATUS_INACTIVE\x10\x02*z\n" +
+	"\x0fInstructionType\x12 \n" +
+	"\x1cINSTRUCTION_TYPE_UNSPECIFIED\x10\x00\x12\"\n" +
+	"\x1eINSTRUCTION_TYPE_POLL_INTERVAL\x10\x01\x12!\n" +
+	"\x1dINSTRUCTION_TYPE_HEALTH_CHECK\x10\x022\xda\x04\n" +
 	"\fAgentService\x12x\n" +
 	"\rRegisterAgent\x12 .netctrl.v1.RegisterAgentRequest\x1a!.netctrl.v1.RegisterAgentResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/api/v1/agents/register\x12b\n" +
 	"\bGetAgent\x12\x1b.netctrl.v1.GetAgentRequest\x1a\x1c.netctrl.v1.GetAgentResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/v1/agents/{id}\x12c\n" +
 	"\n" +
 	"ListAgents\x12\x1d.netctrl.v1.ListAgentsRequest\x1a\x1e.netctrl.v1.ListAgentsResponse\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/api/v1/agents\x12w\n" +
-	"\x0fUnregisterAgent\x12\".netctrl.v1.UnregisterAgentRequest\x1a#.netctrl.v1.UnregisterAgentResponse\"\x1b\x82\xd3\xe4\x93\x02\x15*\x13/api/v1/agents/{id}B\x9d\x01\n" +
+	"\x0fUnregisterAgent\x12\".netctrl.v1.UnregisterAgentRequest\x1a#.netctrl.v1.UnregisterAgentResponse\"\x1b\x82\xd3\xe4\x93\x02\x15*\x13/api/v1/agents/{id}\x12\x8d\x01\n" +
+	"\x0fGetInstructions\x12\".netctrl.v1.GetInstructionsRequest\x1a#.netctrl.v1.GetInstructionsResponse\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/api/v1/agents/{agent_id}/instructionsB\x9d\x01\n" +
 	"\x0ecom.netctrl.v1B\n" +
 	"AgentProtoP\x01Z6github.com/filanov/netctrl-server/pkg/api/v1;netctrlv1\xa2\x02\x03NXX\xaa\x02\n" +
 	"Netctrl.V1\xca\x02\n" +
@@ -662,42 +937,52 @@ func file_v1_agent_proto_rawDescGZIP() []byte {
 	return file_v1_agent_proto_rawDescData
 }
 
-var file_v1_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_v1_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_v1_agent_proto_goTypes = []any{
 	(AgentStatus)(0),                // 0: netctrl.v1.AgentStatus
-	(*Agent)(nil),                   // 1: netctrl.v1.Agent
-	(*RegisterAgentRequest)(nil),    // 2: netctrl.v1.RegisterAgentRequest
-	(*RegisterAgentResponse)(nil),   // 3: netctrl.v1.RegisterAgentResponse
-	(*GetAgentRequest)(nil),         // 4: netctrl.v1.GetAgentRequest
-	(*GetAgentResponse)(nil),        // 5: netctrl.v1.GetAgentResponse
-	(*ListAgentsRequest)(nil),       // 6: netctrl.v1.ListAgentsRequest
-	(*ListAgentsResponse)(nil),      // 7: netctrl.v1.ListAgentsResponse
-	(*UnregisterAgentRequest)(nil),  // 8: netctrl.v1.UnregisterAgentRequest
-	(*UnregisterAgentResponse)(nil), // 9: netctrl.v1.UnregisterAgentResponse
-	(*timestamppb.Timestamp)(nil),   // 10: google.protobuf.Timestamp
+	(InstructionType)(0),            // 1: netctrl.v1.InstructionType
+	(*Agent)(nil),                   // 2: netctrl.v1.Agent
+	(*RegisterAgentRequest)(nil),    // 3: netctrl.v1.RegisterAgentRequest
+	(*RegisterAgentResponse)(nil),   // 4: netctrl.v1.RegisterAgentResponse
+	(*GetAgentRequest)(nil),         // 5: netctrl.v1.GetAgentRequest
+	(*GetAgentResponse)(nil),        // 6: netctrl.v1.GetAgentResponse
+	(*ListAgentsRequest)(nil),       // 7: netctrl.v1.ListAgentsRequest
+	(*ListAgentsResponse)(nil),      // 8: netctrl.v1.ListAgentsResponse
+	(*UnregisterAgentRequest)(nil),  // 9: netctrl.v1.UnregisterAgentRequest
+	(*UnregisterAgentResponse)(nil), // 10: netctrl.v1.UnregisterAgentResponse
+	(*Instruction)(nil),             // 11: netctrl.v1.Instruction
+	(*GetInstructionsRequest)(nil),  // 12: netctrl.v1.GetInstructionsRequest
+	(*GetInstructionsResponse)(nil), // 13: netctrl.v1.GetInstructionsResponse
+	(*timestamppb.Timestamp)(nil),   // 14: google.protobuf.Timestamp
 }
 var file_v1_agent_proto_depIdxs = []int32{
 	0,  // 0: netctrl.v1.Agent.status:type_name -> netctrl.v1.AgentStatus
-	10, // 1: netctrl.v1.Agent.last_seen:type_name -> google.protobuf.Timestamp
-	10, // 2: netctrl.v1.Agent.created_at:type_name -> google.protobuf.Timestamp
-	10, // 3: netctrl.v1.Agent.updated_at:type_name -> google.protobuf.Timestamp
-	1,  // 4: netctrl.v1.RegisterAgentResponse.agent:type_name -> netctrl.v1.Agent
-	1,  // 5: netctrl.v1.GetAgentResponse.agent:type_name -> netctrl.v1.Agent
-	1,  // 6: netctrl.v1.ListAgentsResponse.agents:type_name -> netctrl.v1.Agent
-	2,  // 7: netctrl.v1.AgentService.RegisterAgent:input_type -> netctrl.v1.RegisterAgentRequest
-	4,  // 8: netctrl.v1.AgentService.GetAgent:input_type -> netctrl.v1.GetAgentRequest
-	6,  // 9: netctrl.v1.AgentService.ListAgents:input_type -> netctrl.v1.ListAgentsRequest
-	8,  // 10: netctrl.v1.AgentService.UnregisterAgent:input_type -> netctrl.v1.UnregisterAgentRequest
-	3,  // 11: netctrl.v1.AgentService.RegisterAgent:output_type -> netctrl.v1.RegisterAgentResponse
-	5,  // 12: netctrl.v1.AgentService.GetAgent:output_type -> netctrl.v1.GetAgentResponse
-	7,  // 13: netctrl.v1.AgentService.ListAgents:output_type -> netctrl.v1.ListAgentsResponse
-	9,  // 14: netctrl.v1.AgentService.UnregisterAgent:output_type -> netctrl.v1.UnregisterAgentResponse
-	11, // [11:15] is the sub-list for method output_type
-	7,  // [7:11] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	14, // 1: netctrl.v1.Agent.last_seen:type_name -> google.protobuf.Timestamp
+	14, // 2: netctrl.v1.Agent.created_at:type_name -> google.protobuf.Timestamp
+	14, // 3: netctrl.v1.Agent.updated_at:type_name -> google.protobuf.Timestamp
+	2,  // 4: netctrl.v1.RegisterAgentResponse.agent:type_name -> netctrl.v1.Agent
+	2,  // 5: netctrl.v1.GetAgentResponse.agent:type_name -> netctrl.v1.Agent
+	2,  // 6: netctrl.v1.ListAgentsResponse.agents:type_name -> netctrl.v1.Agent
+	1,  // 7: netctrl.v1.Instruction.type:type_name -> netctrl.v1.InstructionType
+	14, // 8: netctrl.v1.Instruction.created_at:type_name -> google.protobuf.Timestamp
+	11, // 9: netctrl.v1.GetInstructionsResponse.instructions:type_name -> netctrl.v1.Instruction
+	14, // 10: netctrl.v1.GetInstructionsResponse.server_time:type_name -> google.protobuf.Timestamp
+	3,  // 11: netctrl.v1.AgentService.RegisterAgent:input_type -> netctrl.v1.RegisterAgentRequest
+	5,  // 12: netctrl.v1.AgentService.GetAgent:input_type -> netctrl.v1.GetAgentRequest
+	7,  // 13: netctrl.v1.AgentService.ListAgents:input_type -> netctrl.v1.ListAgentsRequest
+	9,  // 14: netctrl.v1.AgentService.UnregisterAgent:input_type -> netctrl.v1.UnregisterAgentRequest
+	12, // 15: netctrl.v1.AgentService.GetInstructions:input_type -> netctrl.v1.GetInstructionsRequest
+	4,  // 16: netctrl.v1.AgentService.RegisterAgent:output_type -> netctrl.v1.RegisterAgentResponse
+	6,  // 17: netctrl.v1.AgentService.GetAgent:output_type -> netctrl.v1.GetAgentResponse
+	8,  // 18: netctrl.v1.AgentService.ListAgents:output_type -> netctrl.v1.ListAgentsResponse
+	10, // 19: netctrl.v1.AgentService.UnregisterAgent:output_type -> netctrl.v1.UnregisterAgentResponse
+	13, // 20: netctrl.v1.AgentService.GetInstructions:output_type -> netctrl.v1.GetInstructionsResponse
+	16, // [16:21] is the sub-list for method output_type
+	11, // [11:16] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_v1_agent_proto_init() }
@@ -710,8 +995,8 @@ func file_v1_agent_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_agent_proto_rawDesc), len(file_v1_agent_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   9,
+			NumEnums:      2,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

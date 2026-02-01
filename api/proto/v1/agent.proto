@@ -37,6 +37,15 @@ service AgentService {
       delete: "/api/v1/agents/{id}"
     };
   }
+
+  // GetInstructions polls for pending instructions
+  // This serves as both instruction delivery and implicit healthcheck
+  rpc GetInstructions(GetInstructionsRequest) returns (GetInstructionsResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/agents/{agent_id}/instructions"
+      body: "*"
+    };
+  }
 }
 
 // AgentStatus represents the current state of an agent
@@ -131,4 +140,60 @@ message UnregisterAgentRequest {
 message UnregisterAgentResponse {
   // Whether the unregistration was successful
   bool success = 1;
+}
+
+// InstructionType defines the type of instruction
+enum InstructionType {
+  INSTRUCTION_TYPE_UNSPECIFIED = 0;
+
+  // POLL_INTERVAL instructs the agent when to poll next
+  INSTRUCTION_TYPE_POLL_INTERVAL = 1;
+
+  // HEALTH_CHECK requests a health status report
+  INSTRUCTION_TYPE_HEALTH_CHECK = 2;
+
+  // Future instruction types can be added here:
+  // INSTRUCTION_TYPE_RUN_COMMAND = 3;
+  // INSTRUCTION_TYPE_UPDATE_CONFIG = 4;
+  // INSTRUCTION_TYPE_COLLECT_METRICS = 5;
+}
+
+// Instruction represents a command or directive from the service to an agent
+message Instruction {
+  // Unique instruction ID
+  string id = 1;
+
+  // Type of instruction
+  InstructionType type = 2;
+
+  // Instruction payload (type-specific data as JSON)
+  string payload = 3;
+
+  // When the instruction was created
+  google.protobuf.Timestamp created_at = 4;
+}
+
+// GetInstructionsRequest requests pending instructions for an agent
+message GetInstructionsRequest {
+  // ID of the agent requesting instructions
+  string agent_id = 1;
+
+  // Optional: ID of the last successfully processed instruction (acknowledgment)
+  string last_instruction_id = 2;
+
+  // Optional: Result data from the last instruction execution
+  string result_data = 3;
+}
+
+// GetInstructionsResponse returns instructions and polling configuration
+message GetInstructionsResponse {
+  // List of pending instructions to execute
+  repeated Instruction instructions = 1;
+
+  // Seconds to wait before the next poll
+  // Default behavior: agent should poll after this interval
+  int32 poll_interval_seconds = 2;
+
+  // Server timestamp when response was generated
+  google.protobuf.Timestamp server_time = 3;
 }

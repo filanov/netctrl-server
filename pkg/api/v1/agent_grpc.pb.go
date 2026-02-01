@@ -23,6 +23,7 @@ const (
 	AgentService_GetAgent_FullMethodName        = "/netctrl.v1.AgentService/GetAgent"
 	AgentService_ListAgents_FullMethodName      = "/netctrl.v1.AgentService/ListAgents"
 	AgentService_UnregisterAgent_FullMethodName = "/netctrl.v1.AgentService/UnregisterAgent"
+	AgentService_GetInstructions_FullMethodName = "/netctrl.v1.AgentService/GetInstructions"
 )
 
 // AgentServiceClient is the client API for AgentService service.
@@ -39,6 +40,9 @@ type AgentServiceClient interface {
 	ListAgents(ctx context.Context, in *ListAgentsRequest, opts ...grpc.CallOption) (*ListAgentsResponse, error)
 	// UnregisterAgent removes an agent
 	UnregisterAgent(ctx context.Context, in *UnregisterAgentRequest, opts ...grpc.CallOption) (*UnregisterAgentResponse, error)
+	// GetInstructions polls for pending instructions
+	// This serves as both instruction delivery and implicit healthcheck
+	GetInstructions(ctx context.Context, in *GetInstructionsRequest, opts ...grpc.CallOption) (*GetInstructionsResponse, error)
 }
 
 type agentServiceClient struct {
@@ -89,6 +93,16 @@ func (c *agentServiceClient) UnregisterAgent(ctx context.Context, in *Unregister
 	return out, nil
 }
 
+func (c *agentServiceClient) GetInstructions(ctx context.Context, in *GetInstructionsRequest, opts ...grpc.CallOption) (*GetInstructionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetInstructionsResponse)
+	err := c.cc.Invoke(ctx, AgentService_GetInstructions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgentServiceServer is the server API for AgentService service.
 // All implementations must embed UnimplementedAgentServiceServer
 // for forward compatibility.
@@ -103,6 +117,9 @@ type AgentServiceServer interface {
 	ListAgents(context.Context, *ListAgentsRequest) (*ListAgentsResponse, error)
 	// UnregisterAgent removes an agent
 	UnregisterAgent(context.Context, *UnregisterAgentRequest) (*UnregisterAgentResponse, error)
+	// GetInstructions polls for pending instructions
+	// This serves as both instruction delivery and implicit healthcheck
+	GetInstructions(context.Context, *GetInstructionsRequest) (*GetInstructionsResponse, error)
 	mustEmbedUnimplementedAgentServiceServer()
 }
 
@@ -124,6 +141,9 @@ func (UnimplementedAgentServiceServer) ListAgents(context.Context, *ListAgentsRe
 }
 func (UnimplementedAgentServiceServer) UnregisterAgent(context.Context, *UnregisterAgentRequest) (*UnregisterAgentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UnregisterAgent not implemented")
+}
+func (UnimplementedAgentServiceServer) GetInstructions(context.Context, *GetInstructionsRequest) (*GetInstructionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetInstructions not implemented")
 }
 func (UnimplementedAgentServiceServer) mustEmbedUnimplementedAgentServiceServer() {}
 func (UnimplementedAgentServiceServer) testEmbeddedByValue()                      {}
@@ -218,6 +238,24 @@ func _AgentService_UnregisterAgent_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AgentService_GetInstructions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInstructionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentServiceServer).GetInstructions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentService_GetInstructions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentServiceServer).GetInstructions(ctx, req.(*GetInstructionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AgentService_ServiceDesc is the grpc.ServiceDesc for AgentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -240,6 +278,10 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnregisterAgent",
 			Handler:    _AgentService_UnregisterAgent_Handler,
+		},
+		{
+			MethodName: "GetInstructions",
+			Handler:    _AgentService_GetInstructions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
