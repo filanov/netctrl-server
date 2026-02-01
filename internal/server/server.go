@@ -20,20 +20,27 @@ type Server struct {
 	clusterService *service.ClusterService
 	agentService   *service.AgentService
 	healthService  *service.HealthService
+	agentMonitor   *service.AgentMonitor
 
 	grpcServer     *grpc.Server
 	gatewayServer  *http.Server
 	gatewayCancel  context.CancelFunc
+	monitorCtx     context.Context
+	monitorCancel  context.CancelFunc
 }
 
 // New creates a new server instance
 func New(cfg *config.Config, storage storage.Storage) *Server {
+	monitorCtx, monitorCancel := context.WithCancel(context.Background())
 	return &Server{
 		config:         cfg,
 		storage:        storage,
 		clusterService: service.NewClusterService(storage),
 		agentService:   service.NewAgentService(storage),
 		healthService:  service.NewHealthService(),
+		agentMonitor:   service.NewAgentMonitor(storage),
+		monitorCtx:     monitorCtx,
+		monitorCancel:  monitorCancel,
 	}
 }
 
@@ -41,6 +48,9 @@ func New(cfg *config.Config, storage storage.Storage) *Server {
 func (s *Server) Start() error {
 	var wg sync.WaitGroup
 	errChan := make(chan error, 2)
+
+	// Start agent monitor
+	go s.agentMonitor.Start(s.monitorCtx)
 
 	// Start gRPC server
 	wg.Add(1)
@@ -87,6 +97,12 @@ func (s *Server) Start() error {
 // Stop gracefully stops both servers
 func (s *Server) Stop() {
 	log.Println("Shutting down servers...")
+
+	// Stop agent monitor
+	if s.monitorCancel != nil {
+		s.monitorCancel()
+	}
+
 	s.stopGatewayServer()
 	s.stopGRPCServer()
 	log.Println("Servers stopped successfully")
