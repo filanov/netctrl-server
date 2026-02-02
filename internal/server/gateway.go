@@ -3,22 +3,40 @@ package server
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/grpclog"
 
 	v1 "github.com/filanov/netctrl-server/pkg/api/v1"
 )
+
+// filteredLogger filters out harmless ServerMetadata errors
+type filteredLogger struct{}
+
+func (f *filteredLogger) Write(p []byte) (n int, err error) {
+	msg := string(p)
+	// Suppress harmless ServerMetadata extraction errors
+	if strings.Contains(msg, "Failed to extract ServerMetadata from context") {
+		return len(p), nil
+	}
+	return log.Writer().Write(p)
+}
 
 // startGatewayServer starts the HTTP gateway server
 func (s *Server) startGatewayServer() error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	s.gatewayCancel = cancel
+
+	// Configure grpclog to filter out harmless errors
+	grpclog.SetLoggerV2(grpclog.NewLoggerV2(io.Discard, &filteredLogger{}, &filteredLogger{}))
 
 	// Create gRPC-Gateway mux
 	mux := runtime.NewServeMux()
