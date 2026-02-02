@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -58,6 +59,9 @@ func (s *AgentService) RegisterAgent(ctx context.Context, req *v1.RegisterAgentR
 			return nil, status.Error(codes.Internal, fmt.Sprintf("failed to update agent: %v", err))
 		}
 
+		log.Printf("Agent re-registered: id=%s, cluster=%s, hostname=%s, ip=%s",
+			existingAgent.Id, existingAgent.ClusterId, existingAgent.Hostname, existingAgent.IpAddress)
+
 		return &v1.RegisterAgentResponse{
 			Agent: existingAgent,
 		}, nil
@@ -79,6 +83,9 @@ func (s *AgentService) RegisterAgent(ctx context.Context, req *v1.RegisterAgentR
 	if err := s.storage.CreateAgent(ctx, agent); err != nil {
 		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to create agent: %v", err))
 	}
+
+	log.Printf("Agent registered: id=%s, cluster=%s, hostname=%s, ip=%s",
+		agent.Id, agent.ClusterId, agent.Hostname, agent.IpAddress)
 
 	return &v1.RegisterAgentResponse{
 		Agent: agent,

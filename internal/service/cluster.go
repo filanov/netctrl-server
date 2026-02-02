@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -47,6 +48,8 @@ func (s *ClusterService) CreateCluster(ctx context.Context, req *v1.CreateCluste
 	if err := s.storage.CreateCluster(ctx, cluster); err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create cluster: %v", err)
 	}
+
+	log.Printf("Cluster created: id=%s, name=%s", cluster.Id, cluster.Name)
 
 	return &v1.CreateClusterResponse{
 		Cluster: cluster,
