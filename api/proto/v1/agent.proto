@@ -55,6 +55,81 @@ enum AgentStatus {
   AGENT_STATUS_INACTIVE = 2;
 }
 
+// PortState represents the operational state of a NIC port
+enum PortState {
+  PORT_STATE_UNSPECIFIED = 0;
+  PORT_STATE_DOWN = 1;
+  PORT_STATE_UP = 2;
+  PORT_STATE_TESTING = 3;
+}
+
+// PortSpeed represents the link speed of a port
+enum PortSpeed {
+  PORT_SPEED_UNSPECIFIED = 0;
+  PORT_SPEED_1G = 1;
+  PORT_SPEED_10G = 10;
+  PORT_SPEED_25G = 25;
+  PORT_SPEED_40G = 40;
+  PORT_SPEED_50G = 50;
+  PORT_SPEED_100G = 100;
+  PORT_SPEED_200G = 200;
+  PORT_SPEED_400G = 400;
+}
+
+// MellanoxPort represents a single port on a Mellanox NIC
+message MellanoxPort {
+  // Port number (1-based)
+  int32 number = 1;
+
+  // Port state (up/down)
+  PortState state = 2;
+
+  // Link speed in Gbps
+  PortSpeed speed = 3;
+
+  // MAC address
+  string mac_address = 4;
+
+  // MTU size
+  int32 mtu = 5;
+
+  // Port GUID
+  string guid = 6;
+
+  // PCI address for this port (e.g., "0000:03:00.1")
+  string pci_address = 7;
+
+  // Network interface name (e.g., "ens1f0")
+  string interface_name = 8;
+}
+
+// MellanoxNIC represents a Mellanox network interface card
+message MellanoxNIC {
+  // Device name (e.g., "mlx5_0")
+  string device_name = 1;
+
+  // PCI address (e.g., "0000:03:00.0")
+  string pci_address = 2;
+
+  // Part number / model
+  string part_number = 3;
+
+  // Serial number
+  string serial_number = 4;
+
+  // Firmware version
+  string firmware_version = 5;
+
+  // Number of ports on this NIC
+  int32 port_count = 6;
+
+  // Port details
+  repeated MellanoxPort ports = 7;
+
+  // PSID (Parameter Set ID)
+  string psid = 8;
+}
+
 // Agent represents a node agent registered to a cluster
 message Agent {
   // Agent-generated UUID (hardware-based identifier)
@@ -83,6 +158,12 @@ message Agent {
 
   // Last update timestamp
   google.protobuf.Timestamp updated_at = 9;
+
+  // Mellanox NICs reported by agent (populated via hardware collection instruction)
+  repeated MellanoxNIC network_interfaces = 10;
+
+  // Whether hardware collection has been completed (true even if no NICs found)
+  bool hardware_collected = 11;
 }
 
 // RegisterAgentRequest contains parameters for registering an agent
@@ -152,10 +233,13 @@ enum InstructionType {
   // HEALTH_CHECK requests a health status report
   INSTRUCTION_TYPE_HEALTH_CHECK = 2;
 
+  // COLLECT_HARDWARE requests hardware inventory (Mellanox NICs)
+  INSTRUCTION_TYPE_COLLECT_HARDWARE = 3;
+
   // Future instruction types can be added here:
-  // INSTRUCTION_TYPE_RUN_COMMAND = 3;
-  // INSTRUCTION_TYPE_UPDATE_CONFIG = 4;
-  // INSTRUCTION_TYPE_COLLECT_METRICS = 5;
+  // INSTRUCTION_TYPE_RUN_COMMAND = 4;
+  // INSTRUCTION_TYPE_UPDATE_CONFIG = 5;
+  // INSTRUCTION_TYPE_COLLECT_METRICS = 6;
 }
 
 // Instruction represents a command or directive from the service to an agent

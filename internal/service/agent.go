@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 
+	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -147,6 +149,13 @@ func (s *AgentService) GetInstructions(ctx context.Context, req *v1.GetInstructi
 		return nil, status.Error(codes.NotFound, fmt.Sprintf("agent not found: %s", req.AgentId))
 	}
 
+	// Process instruction results if provided
+	if req.LastInstructionId != "" && req.ResultData != "" {
+		if err := s.processInstructionResult(ctx, agent, req.LastInstructionId, req.ResultData); err != nil {
+			log.Printf("Failed to process instruction result for agent %s: %v", agent.Id, err)
+		}
+	}
+
 	// Update agent's last_seen timestamp and set status to active
 	now := timestamppb.Now()
 	agent.LastSeen = now
@@ -168,16 +177,72 @@ func (s *AgentService) GetInstructions(ctx context.Context, req *v1.GetInstructi
 	}, nil
 }
 
+// InstructionResult represents the result from an instruction execution
+type InstructionResult struct {
+	InstructionType v1.InstructionType `json:"instruction_type"`
+	Data            json.RawMessage    `json:"data"`
+}
+
+// HardwareData represents hardware collection result
+type HardwareData struct {
+	NetworkInterfaces []*v1.MellanoxNIC `json:"network_interfaces"`
+}
+
+// processInstructionResult processes the result data from an instruction execution
+func (s *AgentService) processInstructionResult(ctx context.Context, agent *v1.Agent, instructionID string, resultData string) error {
+	// Parse the instruction result
+	var result InstructionResult
+	if err := json.Unmarshal([]byte(resultData), &result); err != nil {
+		return fmt.Errorf("failed to parse instruction result: %w", err)
+	}
+
+	// Process based on instruction type
+	switch result.InstructionType {
+	case v1.InstructionType_INSTRUCTION_TYPE_COLLECT_HARDWARE:
+		var hwData HardwareData
+		if err := json.Unmarshal(result.Data, &hwData); err != nil {
+			return fmt.Errorf("failed to parse hardware data: %w", err)
+		}
+
+		// Update agent with hardware information (even if empty)
+		agent.NetworkInterfaces = hwData.NetworkInterfaces
+		agent.HardwareCollected = true
+
+		if len(hwData.NetworkInterfaces) > 0 {
+			log.Printf("Hardware collected for agent %s: %d NICs", agent.Id, len(hwData.NetworkInterfaces))
+		} else {
+			log.Printf("Hardware collected for agent %s: no Mellanox NICs found", agent.Id)
+		}
+
+	default:
+		log.Printf("Unknown instruction type: %v", result.InstructionType)
+	}
+
+	return nil
+}
+
 // generateInstructions creates instructions for an agent based on its state
 func (s *AgentService) generateInstructions(agent *v1.Agent) []*v1.Instruction {
-	// For now, return empty instructions list
-	// In the future, this is where you would:
-	// - Check for pending commands
-	// - Request health checks
-	// - Send configuration updates
-	// - etc.
+	var instructions []*v1.Instruction
 
-	return []*v1.Instruction{}
+	// Request hardware collection if not yet completed
+	if !agent.HardwareCollected {
+		instruction := &v1.Instruction{
+			Id:        uuid.New().String(),
+			Type:      v1.InstructionType_INSTRUCTION_TYPE_COLLECT_HARDWARE,
+			Payload:   `{}`,
+			CreatedAt: timestamppb.Now(),
+		}
+		instructions = append(instructions, instruction)
+		log.Printf("Requesting hardware collection from agent %s", agent.Id)
+	}
+
+	// Future: Add other instruction types here
+	// - Health checks
+	// - Command execution
+	// - Configuration updates
+
+	return instructions
 }
 
 // validateRegisterRequest validates the agent registration request

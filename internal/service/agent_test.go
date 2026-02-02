@@ -306,7 +306,9 @@ var _ = Describe("AgentService", func() {
 			resp, err := agentService.GetInstructions(ctx, req)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(resp).NotTo(BeNil())
-			Expect(resp.Instructions).To(BeEmpty()) // Initially no instructions
+			// Should request hardware collection for new agents without hardware
+			Expect(resp.Instructions).To(HaveLen(1))
+			Expect(resp.Instructions[0].Type).To(Equal(v1.InstructionType_INSTRUCTION_TYPE_COLLECT_HARDWARE))
 			Expect(resp.PollIntervalSeconds).To(Equal(int32(60)))
 			Expect(resp.ServerTime).NotTo(BeNil())
 		})

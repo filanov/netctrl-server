@@ -509,6 +509,18 @@
           "type": "string",
           "format": "date-time",
           "title": "Last update timestamp"
+        },
+        "networkInterfaces": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1MellanoxNIC"
+          },
+          "title": "Mellanox NICs reported by agent (populated via hardware collection instruction)"
+        },
+        "hardwareCollected": {
+          "type": "boolean",
+          "title": "Whether hardware collection has been completed (true even if no NICs found)"
         }
       },
       "title": "Agent represents a node agent registered to a cluster"
@@ -678,10 +690,11 @@
       "enum": [
         "INSTRUCTION_TYPE_UNSPECIFIED",
         "INSTRUCTION_TYPE_POLL_INTERVAL",
-        "INSTRUCTION_TYPE_HEALTH_CHECK"
+        "INSTRUCTION_TYPE_HEALTH_CHECK",
+        "INSTRUCTION_TYPE_COLLECT_HARDWARE"
       ],
       "default": "INSTRUCTION_TYPE_UNSPECIFIED",
-      "description": "- INSTRUCTION_TYPE_POLL_INTERVAL: POLL_INTERVAL instructs the agent when to poll next\n - INSTRUCTION_TYPE_HEALTH_CHECK: HEALTH_CHECK requests a health status report",
+      "description": "- INSTRUCTION_TYPE_POLL_INTERVAL: POLL_INTERVAL instructs the agent when to poll next\n - INSTRUCTION_TYPE_HEALTH_CHECK: HEALTH_CHECK requests a health status report\n - INSTRUCTION_TYPE_COLLECT_HARDWARE: COLLECT_HARDWARE requests hardware inventory (Mellanox NICs)",
       "title": "InstructionType defines the type of instruction"
     },
     "v1ListAgentsResponse": {
@@ -714,6 +727,116 @@
         }
       },
       "title": "ListClustersResponse returns a list of clusters"
+    },
+    "v1MellanoxNIC": {
+      "type": "object",
+      "properties": {
+        "deviceName": {
+          "type": "string",
+          "title": "Device name (e.g., \"mlx5_0\")"
+        },
+        "pciAddress": {
+          "type": "string",
+          "title": "PCI address (e.g., \"0000:03:00.0\")"
+        },
+        "partNumber": {
+          "type": "string",
+          "title": "Part number / model"
+        },
+        "serialNumber": {
+          "type": "string",
+          "title": "Serial number"
+        },
+        "firmwareVersion": {
+          "type": "string",
+          "title": "Firmware version"
+        },
+        "portCount": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Number of ports on this NIC"
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1MellanoxPort"
+          },
+          "title": "Port details"
+        },
+        "psid": {
+          "type": "string",
+          "title": "PSID (Parameter Set ID)"
+        }
+      },
+      "title": "MellanoxNIC represents a Mellanox network interface card"
+    },
+    "v1MellanoxPort": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Port number (1-based)"
+        },
+        "state": {
+          "$ref": "#/definitions/v1PortState",
+          "title": "Port state (up/down)"
+        },
+        "speed": {
+          "$ref": "#/definitions/v1PortSpeed",
+          "title": "Link speed in Gbps"
+        },
+        "macAddress": {
+          "type": "string",
+          "title": "MAC address"
+        },
+        "mtu": {
+          "type": "integer",
+          "format": "int32",
+          "title": "MTU size"
+        },
+        "guid": {
+          "type": "string",
+          "title": "Port GUID"
+        },
+        "pciAddress": {
+          "type": "string",
+          "title": "PCI address for this port (e.g., \"0000:03:00.1\")"
+        },
+        "interfaceName": {
+          "type": "string",
+          "title": "Network interface name (e.g., \"ens1f0\")"
+        }
+      },
+      "title": "MellanoxPort represents a single port on a Mellanox NIC"
+    },
+    "v1PortSpeed": {
+      "type": "string",
+      "enum": [
+        "PORT_SPEED_UNSPECIFIED",
+        "PORT_SPEED_1G",
+        "PORT_SPEED_10G",
+        "PORT_SPEED_25G",
+        "PORT_SPEED_40G",
+        "PORT_SPEED_50G",
+        "PORT_SPEED_100G",
+        "PORT_SPEED_200G",
+        "PORT_SPEED_400G"
+      ],
+      "default": "PORT_SPEED_UNSPECIFIED",
+      "title": "PortSpeed represents the link speed of a port"
+    },
+    "v1PortState": {
+      "type": "string",
+      "enum": [
+        "PORT_STATE_UNSPECIFIED",
+        "PORT_STATE_DOWN",
+        "PORT_STATE_UP",
+        "PORT_STATE_TESTING"
+      ],
+      "default": "PORT_STATE_UNSPECIFIED",
+      "title": "PortState represents the operational state of a NIC port"
     },
     "v1ReadinessCheckResponse": {
       "type": "object",

@@ -73,6 +73,127 @@ func (AgentStatus) EnumDescriptor() ([]byte, []int) {
 	return file_v1_agent_proto_rawDescGZIP(), []int{0}
 }
 
+// PortState represents the operational state of a NIC port
+type PortState int32
+
+const (
+	PortState_PORT_STATE_UNSPECIFIED PortState = 0
+	PortState_PORT_STATE_DOWN        PortState = 1
+	PortState_PORT_STATE_UP          PortState = 2
+	PortState_PORT_STATE_TESTING     PortState = 3
+)
+
+// Enum value maps for PortState.
+var (
+	PortState_name = map[int32]string{
+		0: "PORT_STATE_UNSPECIFIED",
+		1: "PORT_STATE_DOWN",
+		2: "PORT_STATE_UP",
+		3: "PORT_STATE_TESTING",
+	}
+	PortState_value = map[string]int32{
+		"PORT_STATE_UNSPECIFIED": 0,
+		"PORT_STATE_DOWN":        1,
+		"PORT_STATE_UP":          2,
+		"PORT_STATE_TESTING":     3,
+	}
+)
+
+func (x PortState) Enum() *PortState {
+	p := new(PortState)
+	*p = x
+	return p
+}
+
+func (x PortState) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PortState) Descriptor() protoreflect.EnumDescriptor {
+	return file_v1_agent_proto_enumTypes[1].Descriptor()
+}
+
+func (PortState) Type() protoreflect.EnumType {
+	return &file_v1_agent_proto_enumTypes[1]
+}
+
+func (x PortState) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PortState.Descriptor instead.
+func (PortState) EnumDescriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{1}
+}
+
+// PortSpeed represents the link speed of a port
+type PortSpeed int32
+
+const (
+	PortSpeed_PORT_SPEED_UNSPECIFIED PortSpeed = 0
+	PortSpeed_PORT_SPEED_1G          PortSpeed = 1
+	PortSpeed_PORT_SPEED_10G         PortSpeed = 10
+	PortSpeed_PORT_SPEED_25G         PortSpeed = 25
+	PortSpeed_PORT_SPEED_40G         PortSpeed = 40
+	PortSpeed_PORT_SPEED_50G         PortSpeed = 50
+	PortSpeed_PORT_SPEED_100G        PortSpeed = 100
+	PortSpeed_PORT_SPEED_200G        PortSpeed = 200
+	PortSpeed_PORT_SPEED_400G        PortSpeed = 400
+)
+
+// Enum value maps for PortSpeed.
+var (
+	PortSpeed_name = map[int32]string{
+		0:   "PORT_SPEED_UNSPECIFIED",
+		1:   "PORT_SPEED_1G",
+		10:  "PORT_SPEED_10G",
+		25:  "PORT_SPEED_25G",
+		40:  "PORT_SPEED_40G",
+		50:  "PORT_SPEED_50G",
+		100: "PORT_SPEED_100G",
+		200: "PORT_SPEED_200G",
+		400: "PORT_SPEED_400G",
+	}
+	PortSpeed_value = map[string]int32{
+		"PORT_SPEED_UNSPECIFIED": 0,
+		"PORT_SPEED_1G":          1,
+		"PORT_SPEED_10G":         10,
+		"PORT_SPEED_25G":         25,
+		"PORT_SPEED_40G":         40,
+		"PORT_SPEED_50G":         50,
+		"PORT_SPEED_100G":        100,
+		"PORT_SPEED_200G":        200,
+		"PORT_SPEED_400G":        400,
+	}
+)
+
+func (x PortSpeed) Enum() *PortSpeed {
+	p := new(PortSpeed)
+	*p = x
+	return p
+}
+
+func (x PortSpeed) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PortSpeed) Descriptor() protoreflect.EnumDescriptor {
+	return file_v1_agent_proto_enumTypes[2].Descriptor()
+}
+
+func (PortSpeed) Type() protoreflect.EnumType {
+	return &file_v1_agent_proto_enumTypes[2]
+}
+
+func (x PortSpeed) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PortSpeed.Descriptor instead.
+func (PortSpeed) EnumDescriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{2}
+}
+
 // InstructionType defines the type of instruction
 type InstructionType int32
 
@@ -82,6 +203,8 @@ const (
 	InstructionType_INSTRUCTION_TYPE_POLL_INTERVAL InstructionType = 1
 	// HEALTH_CHECK requests a health status report
 	InstructionType_INSTRUCTION_TYPE_HEALTH_CHECK InstructionType = 2
+	// COLLECT_HARDWARE requests hardware inventory (Mellanox NICs)
+	InstructionType_INSTRUCTION_TYPE_COLLECT_HARDWARE InstructionType = 3
 )
 
 // Enum value maps for InstructionType.
@@ -90,11 +213,13 @@ var (
 		0: "INSTRUCTION_TYPE_UNSPECIFIED",
 		1: "INSTRUCTION_TYPE_POLL_INTERVAL",
 		2: "INSTRUCTION_TYPE_HEALTH_CHECK",
+		3: "INSTRUCTION_TYPE_COLLECT_HARDWARE",
 	}
 	InstructionType_value = map[string]int32{
-		"INSTRUCTION_TYPE_UNSPECIFIED":   0,
-		"INSTRUCTION_TYPE_POLL_INTERVAL": 1,
-		"INSTRUCTION_TYPE_HEALTH_CHECK":  2,
+		"INSTRUCTION_TYPE_UNSPECIFIED":      0,
+		"INSTRUCTION_TYPE_POLL_INTERVAL":    1,
+		"INSTRUCTION_TYPE_HEALTH_CHECK":     2,
+		"INSTRUCTION_TYPE_COLLECT_HARDWARE": 3,
 	}
 )
 
@@ -109,11 +234,11 @@ func (x InstructionType) String() string {
 }
 
 func (InstructionType) Descriptor() protoreflect.EnumDescriptor {
-	return file_v1_agent_proto_enumTypes[1].Descriptor()
+	return file_v1_agent_proto_enumTypes[3].Descriptor()
 }
 
 func (InstructionType) Type() protoreflect.EnumType {
-	return &file_v1_agent_proto_enumTypes[1]
+	return &file_v1_agent_proto_enumTypes[3]
 }
 
 func (x InstructionType) Number() protoreflect.EnumNumber {
@@ -122,7 +247,225 @@ func (x InstructionType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use InstructionType.Descriptor instead.
 func (InstructionType) EnumDescriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{3}
+}
+
+// MellanoxPort represents a single port on a Mellanox NIC
+type MellanoxPort struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Port number (1-based)
+	Number int32 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	// Port state (up/down)
+	State PortState `protobuf:"varint,2,opt,name=state,proto3,enum=netctrl.v1.PortState" json:"state,omitempty"`
+	// Link speed in Gbps
+	Speed PortSpeed `protobuf:"varint,3,opt,name=speed,proto3,enum=netctrl.v1.PortSpeed" json:"speed,omitempty"`
+	// MAC address
+	MacAddress string `protobuf:"bytes,4,opt,name=mac_address,json=macAddress,proto3" json:"mac_address,omitempty"`
+	// MTU size
+	Mtu int32 `protobuf:"varint,5,opt,name=mtu,proto3" json:"mtu,omitempty"`
+	// Port GUID
+	Guid string `protobuf:"bytes,6,opt,name=guid,proto3" json:"guid,omitempty"`
+	// PCI address for this port (e.g., "0000:03:00.1")
+	PciAddress string `protobuf:"bytes,7,opt,name=pci_address,json=pciAddress,proto3" json:"pci_address,omitempty"`
+	// Network interface name (e.g., "ens1f0")
+	InterfaceName string `protobuf:"bytes,8,opt,name=interface_name,json=interfaceName,proto3" json:"interface_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MellanoxPort) Reset() {
+	*x = MellanoxPort{}
+	mi := &file_v1_agent_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MellanoxPort) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MellanoxPort) ProtoMessage() {}
+
+func (x *MellanoxPort) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_agent_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MellanoxPort.ProtoReflect.Descriptor instead.
+func (*MellanoxPort) Descriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *MellanoxPort) GetNumber() int32 {
+	if x != nil {
+		return x.Number
+	}
+	return 0
+}
+
+func (x *MellanoxPort) GetState() PortState {
+	if x != nil {
+		return x.State
+	}
+	return PortState_PORT_STATE_UNSPECIFIED
+}
+
+func (x *MellanoxPort) GetSpeed() PortSpeed {
+	if x != nil {
+		return x.Speed
+	}
+	return PortSpeed_PORT_SPEED_UNSPECIFIED
+}
+
+func (x *MellanoxPort) GetMacAddress() string {
+	if x != nil {
+		return x.MacAddress
+	}
+	return ""
+}
+
+func (x *MellanoxPort) GetMtu() int32 {
+	if x != nil {
+		return x.Mtu
+	}
+	return 0
+}
+
+func (x *MellanoxPort) GetGuid() string {
+	if x != nil {
+		return x.Guid
+	}
+	return ""
+}
+
+func (x *MellanoxPort) GetPciAddress() string {
+	if x != nil {
+		return x.PciAddress
+	}
+	return ""
+}
+
+func (x *MellanoxPort) GetInterfaceName() string {
+	if x != nil {
+		return x.InterfaceName
+	}
+	return ""
+}
+
+// MellanoxNIC represents a Mellanox network interface card
+type MellanoxNIC struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Device name (e.g., "mlx5_0")
+	DeviceName string `protobuf:"bytes,1,opt,name=device_name,json=deviceName,proto3" json:"device_name,omitempty"`
+	// PCI address (e.g., "0000:03:00.0")
+	PciAddress string `protobuf:"bytes,2,opt,name=pci_address,json=pciAddress,proto3" json:"pci_address,omitempty"`
+	// Part number / model
+	PartNumber string `protobuf:"bytes,3,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty"`
+	// Serial number
+	SerialNumber string `protobuf:"bytes,4,opt,name=serial_number,json=serialNumber,proto3" json:"serial_number,omitempty"`
+	// Firmware version
+	FirmwareVersion string `protobuf:"bytes,5,opt,name=firmware_version,json=firmwareVersion,proto3" json:"firmware_version,omitempty"`
+	// Number of ports on this NIC
+	PortCount int32 `protobuf:"varint,6,opt,name=port_count,json=portCount,proto3" json:"port_count,omitempty"`
+	// Port details
+	Ports []*MellanoxPort `protobuf:"bytes,7,rep,name=ports,proto3" json:"ports,omitempty"`
+	// PSID (Parameter Set ID)
+	Psid          string `protobuf:"bytes,8,opt,name=psid,proto3" json:"psid,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MellanoxNIC) Reset() {
+	*x = MellanoxNIC{}
+	mi := &file_v1_agent_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MellanoxNIC) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MellanoxNIC) ProtoMessage() {}
+
+func (x *MellanoxNIC) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_agent_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MellanoxNIC.ProtoReflect.Descriptor instead.
+func (*MellanoxNIC) Descriptor() ([]byte, []int) {
 	return file_v1_agent_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *MellanoxNIC) GetDeviceName() string {
+	if x != nil {
+		return x.DeviceName
+	}
+	return ""
+}
+
+func (x *MellanoxNIC) GetPciAddress() string {
+	if x != nil {
+		return x.PciAddress
+	}
+	return ""
+}
+
+func (x *MellanoxNIC) GetPartNumber() string {
+	if x != nil {
+		return x.PartNumber
+	}
+	return ""
+}
+
+func (x *MellanoxNIC) GetSerialNumber() string {
+	if x != nil {
+		return x.SerialNumber
+	}
+	return ""
+}
+
+func (x *MellanoxNIC) GetFirmwareVersion() string {
+	if x != nil {
+		return x.FirmwareVersion
+	}
+	return ""
+}
+
+func (x *MellanoxNIC) GetPortCount() int32 {
+	if x != nil {
+		return x.PortCount
+	}
+	return 0
+}
+
+func (x *MellanoxNIC) GetPorts() []*MellanoxPort {
+	if x != nil {
+		return x.Ports
+	}
+	return nil
+}
+
+func (x *MellanoxNIC) GetPsid() string {
+	if x != nil {
+		return x.Psid
+	}
+	return ""
 }
 
 // Agent represents a node agent registered to a cluster
@@ -145,14 +488,18 @@ type Agent struct {
 	// Creation timestamp
 	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Last update timestamp
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// Mellanox NICs reported by agent (populated via hardware collection instruction)
+	NetworkInterfaces []*MellanoxNIC `protobuf:"bytes,10,rep,name=network_interfaces,json=networkInterfaces,proto3" json:"network_interfaces,omitempty"`
+	// Whether hardware collection has been completed (true even if no NICs found)
+	HardwareCollected bool `protobuf:"varint,11,opt,name=hardware_collected,json=hardwareCollected,proto3" json:"hardware_collected,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *Agent) Reset() {
 	*x = Agent{}
-	mi := &file_v1_agent_proto_msgTypes[0]
+	mi := &file_v1_agent_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -164,7 +511,7 @@ func (x *Agent) String() string {
 func (*Agent) ProtoMessage() {}
 
 func (x *Agent) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[0]
+	mi := &file_v1_agent_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -177,7 +524,7 @@ func (x *Agent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Agent.ProtoReflect.Descriptor instead.
 func (*Agent) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{0}
+	return file_v1_agent_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Agent) GetId() string {
@@ -243,6 +590,20 @@ func (x *Agent) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Agent) GetNetworkInterfaces() []*MellanoxNIC {
+	if x != nil {
+		return x.NetworkInterfaces
+	}
+	return nil
+}
+
+func (x *Agent) GetHardwareCollected() bool {
+	if x != nil {
+		return x.HardwareCollected
+	}
+	return false
+}
+
 // RegisterAgentRequest contains parameters for registering an agent
 type RegisterAgentRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -262,7 +623,7 @@ type RegisterAgentRequest struct {
 
 func (x *RegisterAgentRequest) Reset() {
 	*x = RegisterAgentRequest{}
-	mi := &file_v1_agent_proto_msgTypes[1]
+	mi := &file_v1_agent_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -274,7 +635,7 @@ func (x *RegisterAgentRequest) String() string {
 func (*RegisterAgentRequest) ProtoMessage() {}
 
 func (x *RegisterAgentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[1]
+	mi := &file_v1_agent_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -287,7 +648,7 @@ func (x *RegisterAgentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterAgentRequest.ProtoReflect.Descriptor instead.
 func (*RegisterAgentRequest) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{1}
+	return file_v1_agent_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *RegisterAgentRequest) GetId() string {
@@ -335,7 +696,7 @@ type RegisterAgentResponse struct {
 
 func (x *RegisterAgentResponse) Reset() {
 	*x = RegisterAgentResponse{}
-	mi := &file_v1_agent_proto_msgTypes[2]
+	mi := &file_v1_agent_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -347,7 +708,7 @@ func (x *RegisterAgentResponse) String() string {
 func (*RegisterAgentResponse) ProtoMessage() {}
 
 func (x *RegisterAgentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[2]
+	mi := &file_v1_agent_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -360,7 +721,7 @@ func (x *RegisterAgentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterAgentResponse.ProtoReflect.Descriptor instead.
 func (*RegisterAgentResponse) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{2}
+	return file_v1_agent_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *RegisterAgentResponse) GetAgent() *Agent {
@@ -381,7 +742,7 @@ type GetAgentRequest struct {
 
 func (x *GetAgentRequest) Reset() {
 	*x = GetAgentRequest{}
-	mi := &file_v1_agent_proto_msgTypes[3]
+	mi := &file_v1_agent_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -393,7 +754,7 @@ func (x *GetAgentRequest) String() string {
 func (*GetAgentRequest) ProtoMessage() {}
 
 func (x *GetAgentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[3]
+	mi := &file_v1_agent_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -406,7 +767,7 @@ func (x *GetAgentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAgentRequest.ProtoReflect.Descriptor instead.
 func (*GetAgentRequest) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{3}
+	return file_v1_agent_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetAgentRequest) GetId() string {
@@ -426,7 +787,7 @@ type GetAgentResponse struct {
 
 func (x *GetAgentResponse) Reset() {
 	*x = GetAgentResponse{}
-	mi := &file_v1_agent_proto_msgTypes[4]
+	mi := &file_v1_agent_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -438,7 +799,7 @@ func (x *GetAgentResponse) String() string {
 func (*GetAgentResponse) ProtoMessage() {}
 
 func (x *GetAgentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[4]
+	mi := &file_v1_agent_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -451,7 +812,7 @@ func (x *GetAgentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAgentResponse.ProtoReflect.Descriptor instead.
 func (*GetAgentResponse) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{4}
+	return file_v1_agent_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetAgentResponse) GetAgent() *Agent {
@@ -472,7 +833,7 @@ type ListAgentsRequest struct {
 
 func (x *ListAgentsRequest) Reset() {
 	*x = ListAgentsRequest{}
-	mi := &file_v1_agent_proto_msgTypes[5]
+	mi := &file_v1_agent_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -484,7 +845,7 @@ func (x *ListAgentsRequest) String() string {
 func (*ListAgentsRequest) ProtoMessage() {}
 
 func (x *ListAgentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[5]
+	mi := &file_v1_agent_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -497,7 +858,7 @@ func (x *ListAgentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAgentsRequest.ProtoReflect.Descriptor instead.
 func (*ListAgentsRequest) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{5}
+	return file_v1_agent_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListAgentsRequest) GetClusterId() string {
@@ -517,7 +878,7 @@ type ListAgentsResponse struct {
 
 func (x *ListAgentsResponse) Reset() {
 	*x = ListAgentsResponse{}
-	mi := &file_v1_agent_proto_msgTypes[6]
+	mi := &file_v1_agent_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -529,7 +890,7 @@ func (x *ListAgentsResponse) String() string {
 func (*ListAgentsResponse) ProtoMessage() {}
 
 func (x *ListAgentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[6]
+	mi := &file_v1_agent_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -542,7 +903,7 @@ func (x *ListAgentsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAgentsResponse.ProtoReflect.Descriptor instead.
 func (*ListAgentsResponse) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{6}
+	return file_v1_agent_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListAgentsResponse) GetAgents() []*Agent {
@@ -563,7 +924,7 @@ type UnregisterAgentRequest struct {
 
 func (x *UnregisterAgentRequest) Reset() {
 	*x = UnregisterAgentRequest{}
-	mi := &file_v1_agent_proto_msgTypes[7]
+	mi := &file_v1_agent_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -575,7 +936,7 @@ func (x *UnregisterAgentRequest) String() string {
 func (*UnregisterAgentRequest) ProtoMessage() {}
 
 func (x *UnregisterAgentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[7]
+	mi := &file_v1_agent_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -588,7 +949,7 @@ func (x *UnregisterAgentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnregisterAgentRequest.ProtoReflect.Descriptor instead.
 func (*UnregisterAgentRequest) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{7}
+	return file_v1_agent_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UnregisterAgentRequest) GetId() string {
@@ -609,7 +970,7 @@ type UnregisterAgentResponse struct {
 
 func (x *UnregisterAgentResponse) Reset() {
 	*x = UnregisterAgentResponse{}
-	mi := &file_v1_agent_proto_msgTypes[8]
+	mi := &file_v1_agent_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -621,7 +982,7 @@ func (x *UnregisterAgentResponse) String() string {
 func (*UnregisterAgentResponse) ProtoMessage() {}
 
 func (x *UnregisterAgentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[8]
+	mi := &file_v1_agent_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -634,7 +995,7 @@ func (x *UnregisterAgentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnregisterAgentResponse.ProtoReflect.Descriptor instead.
 func (*UnregisterAgentResponse) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{8}
+	return file_v1_agent_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *UnregisterAgentResponse) GetSuccess() bool {
@@ -661,7 +1022,7 @@ type Instruction struct {
 
 func (x *Instruction) Reset() {
 	*x = Instruction{}
-	mi := &file_v1_agent_proto_msgTypes[9]
+	mi := &file_v1_agent_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -673,7 +1034,7 @@ func (x *Instruction) String() string {
 func (*Instruction) ProtoMessage() {}
 
 func (x *Instruction) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[9]
+	mi := &file_v1_agent_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -686,7 +1047,7 @@ func (x *Instruction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Instruction.ProtoReflect.Descriptor instead.
 func (*Instruction) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{9}
+	return file_v1_agent_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Instruction) GetId() string {
@@ -732,7 +1093,7 @@ type GetInstructionsRequest struct {
 
 func (x *GetInstructionsRequest) Reset() {
 	*x = GetInstructionsRequest{}
-	mi := &file_v1_agent_proto_msgTypes[10]
+	mi := &file_v1_agent_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -744,7 +1105,7 @@ func (x *GetInstructionsRequest) String() string {
 func (*GetInstructionsRequest) ProtoMessage() {}
 
 func (x *GetInstructionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[10]
+	mi := &file_v1_agent_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -757,7 +1118,7 @@ func (x *GetInstructionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInstructionsRequest.ProtoReflect.Descriptor instead.
 func (*GetInstructionsRequest) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{10}
+	return file_v1_agent_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetInstructionsRequest) GetAgentId() string {
@@ -797,7 +1158,7 @@ type GetInstructionsResponse struct {
 
 func (x *GetInstructionsResponse) Reset() {
 	*x = GetInstructionsResponse{}
-	mi := &file_v1_agent_proto_msgTypes[11]
+	mi := &file_v1_agent_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -809,7 +1170,7 @@ func (x *GetInstructionsResponse) String() string {
 func (*GetInstructionsResponse) ProtoMessage() {}
 
 func (x *GetInstructionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[11]
+	mi := &file_v1_agent_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -822,7 +1183,7 @@ func (x *GetInstructionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInstructionsResponse.ProtoReflect.Descriptor instead.
 func (*GetInstructionsResponse) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{11}
+	return file_v1_agent_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GetInstructionsResponse) GetInstructions() []*Instruction {
@@ -851,7 +1212,31 @@ var File_v1_agent_proto protoreflect.FileDescriptor
 const file_v1_agent_proto_rawDesc = "" +
 	"\n" +
 	"\x0ev1/agent.proto\x12\n" +
-	"netctrl.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xeb\x02\n" +
+	"netctrl.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8f\x02\n" +
+	"\fMellanoxPort\x12\x16\n" +
+	"\x06number\x18\x01 \x01(\x05R\x06number\x12+\n" +
+	"\x05state\x18\x02 \x01(\x0e2\x15.netctrl.v1.PortStateR\x05state\x12+\n" +
+	"\x05speed\x18\x03 \x01(\x0e2\x15.netctrl.v1.PortSpeedR\x05speed\x12\x1f\n" +
+	"\vmac_address\x18\x04 \x01(\tR\n" +
+	"macAddress\x12\x10\n" +
+	"\x03mtu\x18\x05 \x01(\x05R\x03mtu\x12\x12\n" +
+	"\x04guid\x18\x06 \x01(\tR\x04guid\x12\x1f\n" +
+	"\vpci_address\x18\a \x01(\tR\n" +
+	"pciAddress\x12%\n" +
+	"\x0einterface_name\x18\b \x01(\tR\rinterfaceName\"\xa3\x02\n" +
+	"\vMellanoxNIC\x12\x1f\n" +
+	"\vdevice_name\x18\x01 \x01(\tR\n" +
+	"deviceName\x12\x1f\n" +
+	"\vpci_address\x18\x02 \x01(\tR\n" +
+	"pciAddress\x12\x1f\n" +
+	"\vpart_number\x18\x03 \x01(\tR\n" +
+	"partNumber\x12#\n" +
+	"\rserial_number\x18\x04 \x01(\tR\fserialNumber\x12)\n" +
+	"\x10firmware_version\x18\x05 \x01(\tR\x0ffirmwareVersion\x12\x1d\n" +
+	"\n" +
+	"port_count\x18\x06 \x01(\x05R\tportCount\x12.\n" +
+	"\x05ports\x18\a \x03(\v2\x18.netctrl.v1.MellanoxPortR\x05ports\x12\x12\n" +
+	"\x04psid\x18\b \x01(\tR\x04psid\"\xe2\x03\n" +
 	"\x05Agent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -865,7 +1250,10 @@ const file_v1_agent_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x9a\x01\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12F\n" +
+	"\x12network_interfaces\x18\n" +
+	" \x03(\v2\x17.netctrl.v1.MellanoxNICR\x11networkInterfaces\x12-\n" +
+	"\x12hardware_collected\x18\v \x01(\bR\x11hardwareCollected\"\x9a\x01\n" +
 	"\x14RegisterAgentRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -908,11 +1296,28 @@ const file_v1_agent_proto_rawDesc = "" +
 	"\vAgentStatus\x12\x1c\n" +
 	"\x18AGENT_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13AGENT_STATUS_ACTIVE\x10\x01\x12\x19\n" +
-	"\x15AGENT_STATUS_INACTIVE\x10\x02*z\n" +
+	"\x15AGENT_STATUS_INACTIVE\x10\x02*g\n" +
+	"\tPortState\x12\x1a\n" +
+	"\x16PORT_STATE_UNSPECIFIED\x10\x00\x12\x13\n" +
+	"\x0fPORT_STATE_DOWN\x10\x01\x12\x11\n" +
+	"\rPORT_STATE_UP\x10\x02\x12\x16\n" +
+	"\x12PORT_STATE_TESTING\x10\x03*\xcb\x01\n" +
+	"\tPortSpeed\x12\x1a\n" +
+	"\x16PORT_SPEED_UNSPECIFIED\x10\x00\x12\x11\n" +
+	"\rPORT_SPEED_1G\x10\x01\x12\x12\n" +
+	"\x0ePORT_SPEED_10G\x10\n" +
+	"\x12\x12\n" +
+	"\x0ePORT_SPEED_25G\x10\x19\x12\x12\n" +
+	"\x0ePORT_SPEED_40G\x10(\x12\x12\n" +
+	"\x0ePORT_SPEED_50G\x102\x12\x13\n" +
+	"\x0fPORT_SPEED_100G\x10d\x12\x14\n" +
+	"\x0fPORT_SPEED_200G\x10\xc8\x01\x12\x14\n" +
+	"\x0fPORT_SPEED_400G\x10\x90\x03*\xa1\x01\n" +
 	"\x0fInstructionType\x12 \n" +
 	"\x1cINSTRUCTION_TYPE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eINSTRUCTION_TYPE_POLL_INTERVAL\x10\x01\x12!\n" +
-	"\x1dINSTRUCTION_TYPE_HEALTH_CHECK\x10\x022\xda\x04\n" +
+	"\x1dINSTRUCTION_TYPE_HEALTH_CHECK\x10\x02\x12%\n" +
+	"!INSTRUCTION_TYPE_COLLECT_HARDWARE\x10\x032\xda\x04\n" +
 	"\fAgentService\x12x\n" +
 	"\rRegisterAgent\x12 .netctrl.v1.RegisterAgentRequest\x1a!.netctrl.v1.RegisterAgentResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/api/v1/agents/register\x12b\n" +
 	"\bGetAgent\x12\x1b.netctrl.v1.GetAgentRequest\x1a\x1c.netctrl.v1.GetAgentResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/v1/agents/{id}\x12c\n" +
@@ -937,52 +1342,60 @@ func file_v1_agent_proto_rawDescGZIP() []byte {
 	return file_v1_agent_proto_rawDescData
 }
 
-var file_v1_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_v1_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_v1_agent_proto_goTypes = []any{
 	(AgentStatus)(0),                // 0: netctrl.v1.AgentStatus
-	(InstructionType)(0),            // 1: netctrl.v1.InstructionType
-	(*Agent)(nil),                   // 2: netctrl.v1.Agent
-	(*RegisterAgentRequest)(nil),    // 3: netctrl.v1.RegisterAgentRequest
-	(*RegisterAgentResponse)(nil),   // 4: netctrl.v1.RegisterAgentResponse
-	(*GetAgentRequest)(nil),         // 5: netctrl.v1.GetAgentRequest
-	(*GetAgentResponse)(nil),        // 6: netctrl.v1.GetAgentResponse
-	(*ListAgentsRequest)(nil),       // 7: netctrl.v1.ListAgentsRequest
-	(*ListAgentsResponse)(nil),      // 8: netctrl.v1.ListAgentsResponse
-	(*UnregisterAgentRequest)(nil),  // 9: netctrl.v1.UnregisterAgentRequest
-	(*UnregisterAgentResponse)(nil), // 10: netctrl.v1.UnregisterAgentResponse
-	(*Instruction)(nil),             // 11: netctrl.v1.Instruction
-	(*GetInstructionsRequest)(nil),  // 12: netctrl.v1.GetInstructionsRequest
-	(*GetInstructionsResponse)(nil), // 13: netctrl.v1.GetInstructionsResponse
-	(*timestamppb.Timestamp)(nil),   // 14: google.protobuf.Timestamp
+	(PortState)(0),                  // 1: netctrl.v1.PortState
+	(PortSpeed)(0),                  // 2: netctrl.v1.PortSpeed
+	(InstructionType)(0),            // 3: netctrl.v1.InstructionType
+	(*MellanoxPort)(nil),            // 4: netctrl.v1.MellanoxPort
+	(*MellanoxNIC)(nil),             // 5: netctrl.v1.MellanoxNIC
+	(*Agent)(nil),                   // 6: netctrl.v1.Agent
+	(*RegisterAgentRequest)(nil),    // 7: netctrl.v1.RegisterAgentRequest
+	(*RegisterAgentResponse)(nil),   // 8: netctrl.v1.RegisterAgentResponse
+	(*GetAgentRequest)(nil),         // 9: netctrl.v1.GetAgentRequest
+	(*GetAgentResponse)(nil),        // 10: netctrl.v1.GetAgentResponse
+	(*ListAgentsRequest)(nil),       // 11: netctrl.v1.ListAgentsRequest
+	(*ListAgentsResponse)(nil),      // 12: netctrl.v1.ListAgentsResponse
+	(*UnregisterAgentRequest)(nil),  // 13: netctrl.v1.UnregisterAgentRequest
+	(*UnregisterAgentResponse)(nil), // 14: netctrl.v1.UnregisterAgentResponse
+	(*Instruction)(nil),             // 15: netctrl.v1.Instruction
+	(*GetInstructionsRequest)(nil),  // 16: netctrl.v1.GetInstructionsRequest
+	(*GetInstructionsResponse)(nil), // 17: netctrl.v1.GetInstructionsResponse
+	(*timestamppb.Timestamp)(nil),   // 18: google.protobuf.Timestamp
 }
 var file_v1_agent_proto_depIdxs = []int32{
-	0,  // 0: netctrl.v1.Agent.status:type_name -> netctrl.v1.AgentStatus
-	14, // 1: netctrl.v1.Agent.last_seen:type_name -> google.protobuf.Timestamp
-	14, // 2: netctrl.v1.Agent.created_at:type_name -> google.protobuf.Timestamp
-	14, // 3: netctrl.v1.Agent.updated_at:type_name -> google.protobuf.Timestamp
-	2,  // 4: netctrl.v1.RegisterAgentResponse.agent:type_name -> netctrl.v1.Agent
-	2,  // 5: netctrl.v1.GetAgentResponse.agent:type_name -> netctrl.v1.Agent
-	2,  // 6: netctrl.v1.ListAgentsResponse.agents:type_name -> netctrl.v1.Agent
-	1,  // 7: netctrl.v1.Instruction.type:type_name -> netctrl.v1.InstructionType
-	14, // 8: netctrl.v1.Instruction.created_at:type_name -> google.protobuf.Timestamp
-	11, // 9: netctrl.v1.GetInstructionsResponse.instructions:type_name -> netctrl.v1.Instruction
-	14, // 10: netctrl.v1.GetInstructionsResponse.server_time:type_name -> google.protobuf.Timestamp
-	3,  // 11: netctrl.v1.AgentService.RegisterAgent:input_type -> netctrl.v1.RegisterAgentRequest
-	5,  // 12: netctrl.v1.AgentService.GetAgent:input_type -> netctrl.v1.GetAgentRequest
-	7,  // 13: netctrl.v1.AgentService.ListAgents:input_type -> netctrl.v1.ListAgentsRequest
-	9,  // 14: netctrl.v1.AgentService.UnregisterAgent:input_type -> netctrl.v1.UnregisterAgentRequest
-	12, // 15: netctrl.v1.AgentService.GetInstructions:input_type -> netctrl.v1.GetInstructionsRequest
-	4,  // 16: netctrl.v1.AgentService.RegisterAgent:output_type -> netctrl.v1.RegisterAgentResponse
-	6,  // 17: netctrl.v1.AgentService.GetAgent:output_type -> netctrl.v1.GetAgentResponse
-	8,  // 18: netctrl.v1.AgentService.ListAgents:output_type -> netctrl.v1.ListAgentsResponse
-	10, // 19: netctrl.v1.AgentService.UnregisterAgent:output_type -> netctrl.v1.UnregisterAgentResponse
-	13, // 20: netctrl.v1.AgentService.GetInstructions:output_type -> netctrl.v1.GetInstructionsResponse
-	16, // [16:21] is the sub-list for method output_type
-	11, // [11:16] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	1,  // 0: netctrl.v1.MellanoxPort.state:type_name -> netctrl.v1.PortState
+	2,  // 1: netctrl.v1.MellanoxPort.speed:type_name -> netctrl.v1.PortSpeed
+	4,  // 2: netctrl.v1.MellanoxNIC.ports:type_name -> netctrl.v1.MellanoxPort
+	0,  // 3: netctrl.v1.Agent.status:type_name -> netctrl.v1.AgentStatus
+	18, // 4: netctrl.v1.Agent.last_seen:type_name -> google.protobuf.Timestamp
+	18, // 5: netctrl.v1.Agent.created_at:type_name -> google.protobuf.Timestamp
+	18, // 6: netctrl.v1.Agent.updated_at:type_name -> google.protobuf.Timestamp
+	5,  // 7: netctrl.v1.Agent.network_interfaces:type_name -> netctrl.v1.MellanoxNIC
+	6,  // 8: netctrl.v1.RegisterAgentResponse.agent:type_name -> netctrl.v1.Agent
+	6,  // 9: netctrl.v1.GetAgentResponse.agent:type_name -> netctrl.v1.Agent
+	6,  // 10: netctrl.v1.ListAgentsResponse.agents:type_name -> netctrl.v1.Agent
+	3,  // 11: netctrl.v1.Instruction.type:type_name -> netctrl.v1.InstructionType
+	18, // 12: netctrl.v1.Instruction.created_at:type_name -> google.protobuf.Timestamp
+	15, // 13: netctrl.v1.GetInstructionsResponse.instructions:type_name -> netctrl.v1.Instruction
+	18, // 14: netctrl.v1.GetInstructionsResponse.server_time:type_name -> google.protobuf.Timestamp
+	7,  // 15: netctrl.v1.AgentService.RegisterAgent:input_type -> netctrl.v1.RegisterAgentRequest
+	9,  // 16: netctrl.v1.AgentService.GetAgent:input_type -> netctrl.v1.GetAgentRequest
+	11, // 17: netctrl.v1.AgentService.ListAgents:input_type -> netctrl.v1.ListAgentsRequest
+	13, // 18: netctrl.v1.AgentService.UnregisterAgent:input_type -> netctrl.v1.UnregisterAgentRequest
+	16, // 19: netctrl.v1.AgentService.GetInstructions:input_type -> netctrl.v1.GetInstructionsRequest
+	8,  // 20: netctrl.v1.AgentService.RegisterAgent:output_type -> netctrl.v1.RegisterAgentResponse
+	10, // 21: netctrl.v1.AgentService.GetAgent:output_type -> netctrl.v1.GetAgentResponse
+	12, // 22: netctrl.v1.AgentService.ListAgents:output_type -> netctrl.v1.ListAgentsResponse
+	14, // 23: netctrl.v1.AgentService.UnregisterAgent:output_type -> netctrl.v1.UnregisterAgentResponse
+	17, // 24: netctrl.v1.AgentService.GetInstructions:output_type -> netctrl.v1.GetInstructionsResponse
+	20, // [20:25] is the sub-list for method output_type
+	15, // [15:20] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_v1_agent_proto_init() }
@@ -995,8 +1408,8 @@ func file_v1_agent_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_agent_proto_rawDesc), len(file_v1_agent_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   12,
+			NumEnums:      4,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
