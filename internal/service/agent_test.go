@@ -358,10 +358,48 @@ var _ = Describe("AgentService", func() {
 			Expect(st.Code()).To(Equal(codes.InvalidArgument))
 		})
 
-		It("should accept last instruction ID and result data", func() {
-			req := &v1.GetInstructionsRequest{
-				AgentId:           agentId,
-				LastInstructionId: "instruction-123",
+	})
+
+	Describe("SubmitInstructionResult", func() {
+		var agentId string
+
+		BeforeEach(func() {
+			// Register an agent first
+			registerReq := &v1.RegisterAgentRequest{
+				Id:        "agent-submit-test",
+				ClusterId: testClusterId,
+				Hostname:  "test-node",
+				IpAddress: "10.0.1.1",
+			}
+			resp, err := agentService.RegisterAgent(ctx, registerReq)
+			Expect(err).NotTo(HaveOccurred())
+			agentId = resp.Agent.Id
+		})
+
+		It("should accept and process hardware collection result", func() {
+			req := &v1.SubmitInstructionResultRequest{
+				AgentId:       agentId,
+				InstructionId: "instruction-123",
+				Result: &v1.InstructionResult{
+					InstructionType: v1.InstructionType_INSTRUCTION_TYPE_COLLECT_HARDWARE,
+					Result: &v1.InstructionResult_HardwareCollection{
+						HardwareCollection: &v1.HardwareCollectionResult{
+							NetworkInterfaces: []*v1.MellanoxNIC{},
+						},
+					},
+				},
+			}
+
+			resp, err := agentService.SubmitInstructionResult(ctx, req)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(resp).NotTo(BeNil())
+			Expect(resp.Success).To(BeTrue())
+		})
+
+		It("should accept and process health check result", func() {
+			req := &v1.SubmitInstructionResultRequest{
+				AgentId:       agentId,
+				InstructionId: "instruction-456",
 				Result: &v1.InstructionResult{
 					InstructionType: v1.InstructionType_INSTRUCTION_TYPE_HEALTH_CHECK,
 					Result: &v1.InstructionResult_HealthCheck{
@@ -372,9 +410,69 @@ var _ = Describe("AgentService", func() {
 				},
 			}
 
-			resp, err := agentService.GetInstructions(ctx, req)
+			resp, err := agentService.SubmitInstructionResult(ctx, req)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(resp).NotTo(BeNil())
+			Expect(resp.Success).To(BeTrue())
+		})
+
+		It("should return error when agent ID is missing", func() {
+			req := &v1.SubmitInstructionResultRequest{
+				InstructionId: "instruction-123",
+				Result: &v1.InstructionResult{
+					InstructionType: v1.InstructionType_INSTRUCTION_TYPE_HEALTH_CHECK,
+				},
+			}
+
+			_, err := agentService.SubmitInstructionResult(ctx, req)
+			Expect(err).To(HaveOccurred())
+			st, ok := status.FromError(err)
+			Expect(ok).To(BeTrue())
+			Expect(st.Code()).To(Equal(codes.InvalidArgument))
+		})
+
+		It("should return error when instruction ID is missing", func() {
+			req := &v1.SubmitInstructionResultRequest{
+				AgentId: agentId,
+				Result: &v1.InstructionResult{
+					InstructionType: v1.InstructionType_INSTRUCTION_TYPE_HEALTH_CHECK,
+				},
+			}
+
+			_, err := agentService.SubmitInstructionResult(ctx, req)
+			Expect(err).To(HaveOccurred())
+			st, ok := status.FromError(err)
+			Expect(ok).To(BeTrue())
+			Expect(st.Code()).To(Equal(codes.InvalidArgument))
+		})
+
+		It("should return error when result is missing", func() {
+			req := &v1.SubmitInstructionResultRequest{
+				AgentId:       agentId,
+				InstructionId: "instruction-123",
+			}
+
+			_, err := agentService.SubmitInstructionResult(ctx, req)
+			Expect(err).To(HaveOccurred())
+			st, ok := status.FromError(err)
+			Expect(ok).To(BeTrue())
+			Expect(st.Code()).To(Equal(codes.InvalidArgument))
+		})
+
+		It("should return error for non-existent agent", func() {
+			req := &v1.SubmitInstructionResultRequest{
+				AgentId:       "non-existent-agent",
+				InstructionId: "instruction-123",
+				Result: &v1.InstructionResult{
+					InstructionType: v1.InstructionType_INSTRUCTION_TYPE_HEALTH_CHECK,
+				},
+			}
+
+			_, err := agentService.SubmitInstructionResult(ctx, req)
+			Expect(err).To(HaveOccurred())
+			st, ok := status.FromError(err)
+			Expect(ok).To(BeTrue())
+			Expect(st.Code()).To(Equal(codes.NotFound))
 		})
 	})
 })

@@ -1277,11 +1277,7 @@ func (*InstructionResult_HealthCheck) isInstructionResult_Result() {}
 type GetInstructionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// ID of the agent requesting instructions
-	AgentId string `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
-	// Optional: ID of the last successfully processed instruction (acknowledgment)
-	LastInstructionId string `protobuf:"bytes,2,opt,name=last_instruction_id,json=lastInstructionId,proto3" json:"last_instruction_id,omitempty"`
-	// Optional: Result from the last instruction execution
-	Result        *InstructionResult `protobuf:"bytes,3,opt,name=result,proto3" json:"result,omitempty"`
+	AgentId       string `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1321,20 +1317,6 @@ func (x *GetInstructionsRequest) GetAgentId() string {
 		return x.AgentId
 	}
 	return ""
-}
-
-func (x *GetInstructionsRequest) GetLastInstructionId() string {
-	if x != nil {
-		return x.LastInstructionId
-	}
-	return ""
-}
-
-func (x *GetInstructionsRequest) GetResult() *InstructionResult {
-	if x != nil {
-		return x.Result
-	}
-	return nil
 }
 
 // GetInstructionsResponse returns instructions and polling configuration
@@ -1400,6 +1382,125 @@ func (x *GetInstructionsResponse) GetServerTime() *timestamppb.Timestamp {
 		return x.ServerTime
 	}
 	return nil
+}
+
+// SubmitInstructionResultRequest submits the result of an instruction
+type SubmitInstructionResultRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// ID of the agent submitting the result
+	AgentId string `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
+	// ID of the instruction that was executed
+	InstructionId string `protobuf:"bytes,2,opt,name=instruction_id,json=instructionId,proto3" json:"instruction_id,omitempty"`
+	// Result of the instruction execution
+	Result        *InstructionResult `protobuf:"bytes,3,opt,name=result,proto3" json:"result,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubmitInstructionResultRequest) Reset() {
+	*x = SubmitInstructionResultRequest{}
+	mi := &file_v1_agent_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubmitInstructionResultRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubmitInstructionResultRequest) ProtoMessage() {}
+
+func (x *SubmitInstructionResultRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_agent_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubmitInstructionResultRequest.ProtoReflect.Descriptor instead.
+func (*SubmitInstructionResultRequest) Descriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *SubmitInstructionResultRequest) GetAgentId() string {
+	if x != nil {
+		return x.AgentId
+	}
+	return ""
+}
+
+func (x *SubmitInstructionResultRequest) GetInstructionId() string {
+	if x != nil {
+		return x.InstructionId
+	}
+	return ""
+}
+
+func (x *SubmitInstructionResultRequest) GetResult() *InstructionResult {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
+// SubmitInstructionResultResponse confirms receipt of the instruction result
+type SubmitInstructionResultResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Whether the result was successfully processed
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	// Optional message (error details or acknowledgment)
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubmitInstructionResultResponse) Reset() {
+	*x = SubmitInstructionResultResponse{}
+	mi := &file_v1_agent_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubmitInstructionResultResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubmitInstructionResultResponse) ProtoMessage() {}
+
+func (x *SubmitInstructionResultResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_agent_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubmitInstructionResultResponse.ProtoReflect.Descriptor instead.
+func (*SubmitInstructionResultResponse) Descriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *SubmitInstructionResultResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *SubmitInstructionResultResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
 }
 
 var File_v1_agent_proto protoreflect.FileDescriptor
@@ -1487,16 +1588,21 @@ const file_v1_agent_proto_rawDesc = "" +
 	"\x10instruction_type\x18\x01 \x01(\x0e2\x1b.netctrl.v1.InstructionTypeR\x0finstructionType\x12W\n" +
 	"\x13hardware_collection\x18\x02 \x01(\v2$.netctrl.v1.HardwareCollectionResultH\x00R\x12hardwareCollection\x12B\n" +
 	"\fhealth_check\x18\x03 \x01(\v2\x1d.netctrl.v1.HealthCheckResultH\x00R\vhealthCheckB\b\n" +
-	"\x06result\"\x9a\x01\n" +
+	"\x06result\"3\n" +
 	"\x16GetInstructionsRequest\x12\x19\n" +
-	"\bagent_id\x18\x01 \x01(\tR\aagentId\x12.\n" +
-	"\x13last_instruction_id\x18\x02 \x01(\tR\x11lastInstructionId\x125\n" +
-	"\x06result\x18\x03 \x01(\v2\x1d.netctrl.v1.InstructionResultR\x06result\"\xc7\x01\n" +
+	"\bagent_id\x18\x01 \x01(\tR\aagentId\"\xc7\x01\n" +
 	"\x17GetInstructionsResponse\x12;\n" +
 	"\finstructions\x18\x01 \x03(\v2\x17.netctrl.v1.InstructionR\finstructions\x122\n" +
 	"\x15poll_interval_seconds\x18\x02 \x01(\x05R\x13pollIntervalSeconds\x12;\n" +
 	"\vserver_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"serverTime*_\n" +
+	"serverTime\"\x99\x01\n" +
+	"\x1eSubmitInstructionResultRequest\x12\x19\n" +
+	"\bagent_id\x18\x01 \x01(\tR\aagentId\x12%\n" +
+	"\x0einstruction_id\x18\x02 \x01(\tR\rinstructionId\x125\n" +
+	"\x06result\x18\x03 \x01(\v2\x1d.netctrl.v1.InstructionResultR\x06result\"U\n" +
+	"\x1fSubmitInstructionResultResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage*_\n" +
 	"\vAgentStatus\x12\x1c\n" +
 	"\x18AGENT_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13AGENT_STATUS_ACTIVE\x10\x01\x12\x19\n" +
@@ -1521,14 +1627,15 @@ const file_v1_agent_proto_rawDesc = "" +
 	"\x1cINSTRUCTION_TYPE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eINSTRUCTION_TYPE_POLL_INTERVAL\x10\x01\x12!\n" +
 	"\x1dINSTRUCTION_TYPE_HEALTH_CHECK\x10\x02\x12%\n" +
-	"!INSTRUCTION_TYPE_COLLECT_HARDWARE\x10\x032\xda\x04\n" +
+	"!INSTRUCTION_TYPE_COLLECT_HARDWARE\x10\x032\x9c\x06\n" +
 	"\fAgentService\x12x\n" +
 	"\rRegisterAgent\x12 .netctrl.v1.RegisterAgentRequest\x1a!.netctrl.v1.RegisterAgentResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/api/v1/agents/register\x12b\n" +
 	"\bGetAgent\x12\x1b.netctrl.v1.GetAgentRequest\x1a\x1c.netctrl.v1.GetAgentResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/api/v1/agents/{id}\x12c\n" +
 	"\n" +
 	"ListAgents\x12\x1d.netctrl.v1.ListAgentsRequest\x1a\x1e.netctrl.v1.ListAgentsResponse\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/api/v1/agents\x12w\n" +
-	"\x0fUnregisterAgent\x12\".netctrl.v1.UnregisterAgentRequest\x1a#.netctrl.v1.UnregisterAgentResponse\"\x1b\x82\xd3\xe4\x93\x02\x15*\x13/api/v1/agents/{id}\x12\x8d\x01\n" +
-	"\x0fGetInstructions\x12\".netctrl.v1.GetInstructionsRequest\x1a#.netctrl.v1.GetInstructionsResponse\"1\x82\xd3\xe4\x93\x02+:\x01*\"&/api/v1/agents/{agent_id}/instructionsB\x9d\x01\n" +
+	"\x0fUnregisterAgent\x12\".netctrl.v1.UnregisterAgentRequest\x1a#.netctrl.v1.UnregisterAgentResponse\"\x1b\x82\xd3\xe4\x93\x02\x15*\x13/api/v1/agents/{id}\x12\x8a\x01\n" +
+	"\x0fGetInstructions\x12\".netctrl.v1.GetInstructionsRequest\x1a#.netctrl.v1.GetInstructionsResponse\".\x82\xd3\xe4\x93\x02(\x12&/api/v1/agents/{agent_id}/instructions\x12\xc2\x01\n" +
+	"\x17SubmitInstructionResult\x12*.netctrl.v1.SubmitInstructionResultRequest\x1a+.netctrl.v1.SubmitInstructionResultResponse\"N\x82\xd3\xe4\x93\x02H:\x06result\">/api/v1/agents/{agent_id}/instructions/{instruction_id}/resultB\x9d\x01\n" +
 	"\x0ecom.netctrl.v1B\n" +
 	"AgentProtoP\x01Z6github.com/filanov/netctrl-server/pkg/api/v1;netctrlv1\xa2\x02\x03NXX\xaa\x02\n" +
 	"Netctrl.V1\xca\x02\n" +
@@ -1547,64 +1654,68 @@ func file_v1_agent_proto_rawDescGZIP() []byte {
 }
 
 var file_v1_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_v1_agent_proto_goTypes = []any{
-	(AgentStatus)(0),                 // 0: netctrl.v1.AgentStatus
-	(PortState)(0),                   // 1: netctrl.v1.PortState
-	(PortSpeed)(0),                   // 2: netctrl.v1.PortSpeed
-	(InstructionType)(0),             // 3: netctrl.v1.InstructionType
-	(*MellanoxPort)(nil),             // 4: netctrl.v1.MellanoxPort
-	(*MellanoxNIC)(nil),              // 5: netctrl.v1.MellanoxNIC
-	(*Agent)(nil),                    // 6: netctrl.v1.Agent
-	(*RegisterAgentRequest)(nil),     // 7: netctrl.v1.RegisterAgentRequest
-	(*RegisterAgentResponse)(nil),    // 8: netctrl.v1.RegisterAgentResponse
-	(*GetAgentRequest)(nil),          // 9: netctrl.v1.GetAgentRequest
-	(*GetAgentResponse)(nil),         // 10: netctrl.v1.GetAgentResponse
-	(*ListAgentsRequest)(nil),        // 11: netctrl.v1.ListAgentsRequest
-	(*ListAgentsResponse)(nil),       // 12: netctrl.v1.ListAgentsResponse
-	(*UnregisterAgentRequest)(nil),   // 13: netctrl.v1.UnregisterAgentRequest
-	(*UnregisterAgentResponse)(nil),  // 14: netctrl.v1.UnregisterAgentResponse
-	(*Instruction)(nil),              // 15: netctrl.v1.Instruction
-	(*HardwareCollectionResult)(nil), // 16: netctrl.v1.HardwareCollectionResult
-	(*HealthCheckResult)(nil),        // 17: netctrl.v1.HealthCheckResult
-	(*InstructionResult)(nil),        // 18: netctrl.v1.InstructionResult
-	(*GetInstructionsRequest)(nil),   // 19: netctrl.v1.GetInstructionsRequest
-	(*GetInstructionsResponse)(nil),  // 20: netctrl.v1.GetInstructionsResponse
-	(*timestamppb.Timestamp)(nil),    // 21: google.protobuf.Timestamp
+	(AgentStatus)(0),                        // 0: netctrl.v1.AgentStatus
+	(PortState)(0),                          // 1: netctrl.v1.PortState
+	(PortSpeed)(0),                          // 2: netctrl.v1.PortSpeed
+	(InstructionType)(0),                    // 3: netctrl.v1.InstructionType
+	(*MellanoxPort)(nil),                    // 4: netctrl.v1.MellanoxPort
+	(*MellanoxNIC)(nil),                     // 5: netctrl.v1.MellanoxNIC
+	(*Agent)(nil),                           // 6: netctrl.v1.Agent
+	(*RegisterAgentRequest)(nil),            // 7: netctrl.v1.RegisterAgentRequest
+	(*RegisterAgentResponse)(nil),           // 8: netctrl.v1.RegisterAgentResponse
+	(*GetAgentRequest)(nil),                 // 9: netctrl.v1.GetAgentRequest
+	(*GetAgentResponse)(nil),                // 10: netctrl.v1.GetAgentResponse
+	(*ListAgentsRequest)(nil),               // 11: netctrl.v1.ListAgentsRequest
+	(*ListAgentsResponse)(nil),              // 12: netctrl.v1.ListAgentsResponse
+	(*UnregisterAgentRequest)(nil),          // 13: netctrl.v1.UnregisterAgentRequest
+	(*UnregisterAgentResponse)(nil),         // 14: netctrl.v1.UnregisterAgentResponse
+	(*Instruction)(nil),                     // 15: netctrl.v1.Instruction
+	(*HardwareCollectionResult)(nil),        // 16: netctrl.v1.HardwareCollectionResult
+	(*HealthCheckResult)(nil),               // 17: netctrl.v1.HealthCheckResult
+	(*InstructionResult)(nil),               // 18: netctrl.v1.InstructionResult
+	(*GetInstructionsRequest)(nil),          // 19: netctrl.v1.GetInstructionsRequest
+	(*GetInstructionsResponse)(nil),         // 20: netctrl.v1.GetInstructionsResponse
+	(*SubmitInstructionResultRequest)(nil),  // 21: netctrl.v1.SubmitInstructionResultRequest
+	(*SubmitInstructionResultResponse)(nil), // 22: netctrl.v1.SubmitInstructionResultResponse
+	(*timestamppb.Timestamp)(nil),           // 23: google.protobuf.Timestamp
 }
 var file_v1_agent_proto_depIdxs = []int32{
 	1,  // 0: netctrl.v1.MellanoxPort.state:type_name -> netctrl.v1.PortState
 	2,  // 1: netctrl.v1.MellanoxPort.speed:type_name -> netctrl.v1.PortSpeed
 	4,  // 2: netctrl.v1.MellanoxNIC.ports:type_name -> netctrl.v1.MellanoxPort
 	0,  // 3: netctrl.v1.Agent.status:type_name -> netctrl.v1.AgentStatus
-	21, // 4: netctrl.v1.Agent.last_seen:type_name -> google.protobuf.Timestamp
-	21, // 5: netctrl.v1.Agent.created_at:type_name -> google.protobuf.Timestamp
-	21, // 6: netctrl.v1.Agent.updated_at:type_name -> google.protobuf.Timestamp
+	23, // 4: netctrl.v1.Agent.last_seen:type_name -> google.protobuf.Timestamp
+	23, // 5: netctrl.v1.Agent.created_at:type_name -> google.protobuf.Timestamp
+	23, // 6: netctrl.v1.Agent.updated_at:type_name -> google.protobuf.Timestamp
 	5,  // 7: netctrl.v1.Agent.network_interfaces:type_name -> netctrl.v1.MellanoxNIC
 	6,  // 8: netctrl.v1.RegisterAgentResponse.agent:type_name -> netctrl.v1.Agent
 	6,  // 9: netctrl.v1.GetAgentResponse.agent:type_name -> netctrl.v1.Agent
 	6,  // 10: netctrl.v1.ListAgentsResponse.agents:type_name -> netctrl.v1.Agent
 	3,  // 11: netctrl.v1.Instruction.type:type_name -> netctrl.v1.InstructionType
-	21, // 12: netctrl.v1.Instruction.created_at:type_name -> google.protobuf.Timestamp
+	23, // 12: netctrl.v1.Instruction.created_at:type_name -> google.protobuf.Timestamp
 	5,  // 13: netctrl.v1.HardwareCollectionResult.network_interfaces:type_name -> netctrl.v1.MellanoxNIC
 	3,  // 14: netctrl.v1.InstructionResult.instruction_type:type_name -> netctrl.v1.InstructionType
 	16, // 15: netctrl.v1.InstructionResult.hardware_collection:type_name -> netctrl.v1.HardwareCollectionResult
 	17, // 16: netctrl.v1.InstructionResult.health_check:type_name -> netctrl.v1.HealthCheckResult
-	18, // 17: netctrl.v1.GetInstructionsRequest.result:type_name -> netctrl.v1.InstructionResult
-	15, // 18: netctrl.v1.GetInstructionsResponse.instructions:type_name -> netctrl.v1.Instruction
-	21, // 19: netctrl.v1.GetInstructionsResponse.server_time:type_name -> google.protobuf.Timestamp
+	15, // 17: netctrl.v1.GetInstructionsResponse.instructions:type_name -> netctrl.v1.Instruction
+	23, // 18: netctrl.v1.GetInstructionsResponse.server_time:type_name -> google.protobuf.Timestamp
+	18, // 19: netctrl.v1.SubmitInstructionResultRequest.result:type_name -> netctrl.v1.InstructionResult
 	7,  // 20: netctrl.v1.AgentService.RegisterAgent:input_type -> netctrl.v1.RegisterAgentRequest
 	9,  // 21: netctrl.v1.AgentService.GetAgent:input_type -> netctrl.v1.GetAgentRequest
 	11, // 22: netctrl.v1.AgentService.ListAgents:input_type -> netctrl.v1.ListAgentsRequest
 	13, // 23: netctrl.v1.AgentService.UnregisterAgent:input_type -> netctrl.v1.UnregisterAgentRequest
 	19, // 24: netctrl.v1.AgentService.GetInstructions:input_type -> netctrl.v1.GetInstructionsRequest
-	8,  // 25: netctrl.v1.AgentService.RegisterAgent:output_type -> netctrl.v1.RegisterAgentResponse
-	10, // 26: netctrl.v1.AgentService.GetAgent:output_type -> netctrl.v1.GetAgentResponse
-	12, // 27: netctrl.v1.AgentService.ListAgents:output_type -> netctrl.v1.ListAgentsResponse
-	14, // 28: netctrl.v1.AgentService.UnregisterAgent:output_type -> netctrl.v1.UnregisterAgentResponse
-	20, // 29: netctrl.v1.AgentService.GetInstructions:output_type -> netctrl.v1.GetInstructionsResponse
-	25, // [25:30] is the sub-list for method output_type
-	20, // [20:25] is the sub-list for method input_type
+	21, // 25: netctrl.v1.AgentService.SubmitInstructionResult:input_type -> netctrl.v1.SubmitInstructionResultRequest
+	8,  // 26: netctrl.v1.AgentService.RegisterAgent:output_type -> netctrl.v1.RegisterAgentResponse
+	10, // 27: netctrl.v1.AgentService.GetAgent:output_type -> netctrl.v1.GetAgentResponse
+	12, // 28: netctrl.v1.AgentService.ListAgents:output_type -> netctrl.v1.ListAgentsResponse
+	14, // 29: netctrl.v1.AgentService.UnregisterAgent:output_type -> netctrl.v1.UnregisterAgentResponse
+	20, // 30: netctrl.v1.AgentService.GetInstructions:output_type -> netctrl.v1.GetInstructionsResponse
+	22, // 31: netctrl.v1.AgentService.SubmitInstructionResult:output_type -> netctrl.v1.SubmitInstructionResultResponse
+	26, // [26:32] is the sub-list for method output_type
+	20, // [20:26] is the sub-list for method input_type
 	20, // [20:20] is the sub-list for extension type_name
 	20, // [20:20] is the sub-list for extension extendee
 	0,  // [0:20] is the sub-list for field type_name
@@ -1625,7 +1736,7 @@ func file_v1_agent_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_agent_proto_rawDesc), len(file_v1_agent_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   17,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

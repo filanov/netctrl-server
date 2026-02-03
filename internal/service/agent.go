@@ -148,13 +148,6 @@ func (s *AgentService) GetInstructions(ctx context.Context, req *v1.GetInstructi
 		return nil, status.Error(codes.NotFound, fmt.Sprintf("agent not found: %s", req.AgentId))
 	}
 
-	// Process instruction results if provided
-	if req.LastInstructionId != "" && req.Result != nil {
-		if err := s.processInstructionResult(agent, req.Result); err != nil {
-			log.Printf("Failed to process instruction result for agent %s: %v", agent.Id, err)
-		}
-	}
-
 	// Update agent's last_seen timestamp and set status to active
 	now := timestamppb.Now()
 	agent.LastSeen = now
@@ -173,6 +166,45 @@ func (s *AgentService) GetInstructions(ctx context.Context, req *v1.GetInstructi
 		Instructions:        instructions,
 		PollIntervalSeconds: 60, // Default: poll every 60 seconds (1 minute)
 		ServerTime:          now,
+	}, nil
+}
+
+// SubmitInstructionResult processes the result of a completed instruction
+func (s *AgentService) SubmitInstructionResult(ctx context.Context, req *v1.SubmitInstructionResultRequest) (*v1.SubmitInstructionResultResponse, error) {
+	if req.AgentId == "" {
+		return nil, status.Error(codes.InvalidArgument, "agent ID is required")
+	}
+	if req.InstructionId == "" {
+		return nil, status.Error(codes.InvalidArgument, "instruction ID is required")
+	}
+	if req.Result == nil {
+		return nil, status.Error(codes.InvalidArgument, "result is required")
+	}
+
+	// Verify agent exists
+	agent, err := s.storage.GetAgent(ctx, req.AgentId)
+	if err != nil {
+		return nil, status.Error(codes.NotFound, fmt.Sprintf("agent not found: %s", req.AgentId))
+	}
+
+	// Process the instruction result
+	if err := s.processInstructionResult(agent, req.Result); err != nil {
+		log.Printf("Failed to process instruction result for agent %s: %v", agent.Id, err)
+		return &v1.SubmitInstructionResultResponse{
+			Success: false,
+			Message: fmt.Sprintf("Failed to process result: %v", err),
+		}, nil
+	}
+
+	// Update agent in storage with the processed result
+	agent.UpdatedAt = timestamppb.Now()
+	if err := s.storage.UpdateAgent(ctx, agent); err != nil {
+		return nil, status.Error(codes.Internal, fmt.Sprintf("failed to update agent: %v", err))
+	}
+
+	return &v1.SubmitInstructionResultResponse{
+		Success: true,
+		Message: "Result processed successfully",
 	}, nil
 }
 

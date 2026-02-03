@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AgentService_RegisterAgent_FullMethodName   = "/netctrl.v1.AgentService/RegisterAgent"
-	AgentService_GetAgent_FullMethodName        = "/netctrl.v1.AgentService/GetAgent"
-	AgentService_ListAgents_FullMethodName      = "/netctrl.v1.AgentService/ListAgents"
-	AgentService_UnregisterAgent_FullMethodName = "/netctrl.v1.AgentService/UnregisterAgent"
-	AgentService_GetInstructions_FullMethodName = "/netctrl.v1.AgentService/GetInstructions"
+	AgentService_RegisterAgent_FullMethodName           = "/netctrl.v1.AgentService/RegisterAgent"
+	AgentService_GetAgent_FullMethodName                = "/netctrl.v1.AgentService/GetAgent"
+	AgentService_ListAgents_FullMethodName              = "/netctrl.v1.AgentService/ListAgents"
+	AgentService_UnregisterAgent_FullMethodName         = "/netctrl.v1.AgentService/UnregisterAgent"
+	AgentService_GetInstructions_FullMethodName         = "/netctrl.v1.AgentService/GetInstructions"
+	AgentService_SubmitInstructionResult_FullMethodName = "/netctrl.v1.AgentService/SubmitInstructionResult"
 )
 
 // AgentServiceClient is the client API for AgentService service.
@@ -41,8 +42,10 @@ type AgentServiceClient interface {
 	// UnregisterAgent removes an agent
 	UnregisterAgent(ctx context.Context, in *UnregisterAgentRequest, opts ...grpc.CallOption) (*UnregisterAgentResponse, error)
 	// GetInstructions polls for pending instructions
-	// This serves as both instruction delivery and implicit healthcheck
+	// This serves as instruction delivery and implicit healthcheck
 	GetInstructions(ctx context.Context, in *GetInstructionsRequest, opts ...grpc.CallOption) (*GetInstructionsResponse, error)
+	// SubmitInstructionResult submits the result of a completed instruction
+	SubmitInstructionResult(ctx context.Context, in *SubmitInstructionResultRequest, opts ...grpc.CallOption) (*SubmitInstructionResultResponse, error)
 }
 
 type agentServiceClient struct {
@@ -103,6 +106,16 @@ func (c *agentServiceClient) GetInstructions(ctx context.Context, in *GetInstruc
 	return out, nil
 }
 
+func (c *agentServiceClient) SubmitInstructionResult(ctx context.Context, in *SubmitInstructionResultRequest, opts ...grpc.CallOption) (*SubmitInstructionResultResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SubmitInstructionResultResponse)
+	err := c.cc.Invoke(ctx, AgentService_SubmitInstructionResult_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AgentServiceServer is the server API for AgentService service.
 // All implementations must embed UnimplementedAgentServiceServer
 // for forward compatibility.
@@ -118,8 +131,10 @@ type AgentServiceServer interface {
 	// UnregisterAgent removes an agent
 	UnregisterAgent(context.Context, *UnregisterAgentRequest) (*UnregisterAgentResponse, error)
 	// GetInstructions polls for pending instructions
-	// This serves as both instruction delivery and implicit healthcheck
+	// This serves as instruction delivery and implicit healthcheck
 	GetInstructions(context.Context, *GetInstructionsRequest) (*GetInstructionsResponse, error)
+	// SubmitInstructionResult submits the result of a completed instruction
+	SubmitInstructionResult(context.Context, *SubmitInstructionResultRequest) (*SubmitInstructionResultResponse, error)
 	mustEmbedUnimplementedAgentServiceServer()
 }
 
@@ -144,6 +159,9 @@ func (UnimplementedAgentServiceServer) UnregisterAgent(context.Context, *Unregis
 }
 func (UnimplementedAgentServiceServer) GetInstructions(context.Context, *GetInstructionsRequest) (*GetInstructionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetInstructions not implemented")
+}
+func (UnimplementedAgentServiceServer) SubmitInstructionResult(context.Context, *SubmitInstructionResultRequest) (*SubmitInstructionResultResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SubmitInstructionResult not implemented")
 }
 func (UnimplementedAgentServiceServer) mustEmbedUnimplementedAgentServiceServer() {}
 func (UnimplementedAgentServiceServer) testEmbeddedByValue()                      {}
@@ -256,6 +274,24 @@ func _AgentService_GetInstructions_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AgentService_SubmitInstructionResult_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubmitInstructionResultRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AgentServiceServer).SubmitInstructionResult(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AgentService_SubmitInstructionResult_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AgentServiceServer).SubmitInstructionResult(ctx, req.(*SubmitInstructionResultRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AgentService_ServiceDesc is the grpc.ServiceDesc for AgentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -282,6 +318,10 @@ var AgentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetInstructions",
 			Handler:    _AgentService_GetInstructions_Handler,
+		},
+		{
+			MethodName: "SubmitInstructionResult",
+			Handler:    _AgentService_SubmitInstructionResult_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

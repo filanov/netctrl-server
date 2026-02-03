@@ -39,11 +39,18 @@ service AgentService {
   }
 
   // GetInstructions polls for pending instructions
-  // This serves as both instruction delivery and implicit healthcheck
+  // This serves as instruction delivery and implicit healthcheck
   rpc GetInstructions(GetInstructionsRequest) returns (GetInstructionsResponse) {
     option (google.api.http) = {
-      post: "/api/v1/agents/{agent_id}/instructions"
-      body: "*"
+      get: "/api/v1/agents/{agent_id}/instructions"
+    };
+  }
+
+  // SubmitInstructionResult submits the result of a completed instruction
+  rpc SubmitInstructionResult(SubmitInstructionResultRequest) returns (SubmitInstructionResultResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/agents/{agent_id}/instructions/{instruction_id}/result"
+      body: "result"
     };
   }
 }
@@ -289,12 +296,6 @@ message InstructionResult {
 message GetInstructionsRequest {
   // ID of the agent requesting instructions
   string agent_id = 1;
-
-  // Optional: ID of the last successfully processed instruction (acknowledgment)
-  string last_instruction_id = 2;
-
-  // Optional: Result from the last instruction execution
-  InstructionResult result = 3;
 }
 
 // GetInstructionsResponse returns instructions and polling configuration
@@ -308,4 +309,25 @@ message GetInstructionsResponse {
 
   // Server timestamp when response was generated
   google.protobuf.Timestamp server_time = 3;
+}
+
+// SubmitInstructionResultRequest submits the result of an instruction
+message SubmitInstructionResultRequest {
+  // ID of the agent submitting the result
+  string agent_id = 1;
+
+  // ID of the instruction that was executed
+  string instruction_id = 2;
+
+  // Result of the instruction execution
+  InstructionResult result = 3;
+}
+
+// SubmitInstructionResultResponse confirms receipt of the instruction result
+message SubmitInstructionResultResponse {
+  // Whether the result was successfully processed
+  bool success = 1;
+
+  // Optional message (error details or acknowledgment)
+  string message = 2;
 }

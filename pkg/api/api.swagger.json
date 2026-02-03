@@ -88,8 +88,8 @@
       }
     },
     "/api/v1/agents/{agentId}/instructions": {
-      "post": {
-        "summary": "GetInstructions polls for pending instructions\nThis serves as both instruction delivery and implicit healthcheck",
+      "get": {
+        "summary": "GetInstructions polls for pending instructions\nThis serves as instruction delivery and implicit healthcheck",
         "operationId": "AgentService_GetInstructions",
         "responses": {
           "200": {
@@ -112,13 +112,53 @@
             "in": "path",
             "required": true,
             "type": "string"
+          }
+        ],
+        "tags": [
+          "AgentService"
+        ]
+      }
+    },
+    "/api/v1/agents/{agentId}/instructions/{instructionId}/result": {
+      "post": {
+        "summary": "SubmitInstructionResult submits the result of a completed instruction",
+        "operationId": "AgentService_SubmitInstructionResult",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1SubmitInstructionResultResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "agentId",
+            "description": "ID of the agent submitting the result",
+            "in": "path",
+            "required": true,
+            "type": "string"
           },
           {
-            "name": "body",
+            "name": "instructionId",
+            "description": "ID of the instruction that was executed",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "result",
+            "description": "Result of the instruction execution",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AgentServiceGetInstructionsBody"
+              "$ref": "#/definitions/v1InstructionResult"
             }
           }
         ],
@@ -408,20 +448,6 @@
     }
   },
   "definitions": {
-    "AgentServiceGetInstructionsBody": {
-      "type": "object",
-      "properties": {
-        "lastInstructionId": {
-          "type": "string",
-          "title": "Optional: ID of the last successfully processed instruction (acknowledgment)"
-        },
-        "result": {
-          "$ref": "#/definitions/v1InstructionResult",
-          "title": "Optional: Result from the last instruction execution"
-        }
-      },
-      "title": "GetInstructionsRequest requests pending instructions for an agent"
-    },
     "ClusterServiceUpdateClusterBody": {
       "type": "object",
       "properties": {
@@ -941,6 +967,20 @@
         }
       },
       "title": "RegisterAgentResponse returns the registered agent"
+    },
+    "v1SubmitInstructionResultResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "title": "Whether the result was successfully processed"
+        },
+        "message": {
+          "type": "string",
+          "title": "Optional message (error details or acknowledgment)"
+        }
+      },
+      "title": "SubmitInstructionResultResponse confirms receipt of the instruction result"
     },
     "v1UnregisterAgentResponse": {
       "type": "object",
