@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/filanov/netctrl-server/internal/service"
-	"github.com/filanov/netctrl-server/internal/storage/memory"
+	"github.com/filanov/netctrl-server/internal/storage/mock"
 	v1 "github.com/filanov/netctrl-server/pkg/api/v1"
 )
 
@@ -19,13 +19,13 @@ var _ = Describe("AgentMonitor", func() {
 		monitor        *service.AgentMonitor
 		agentService   *service.AgentService
 		clusterService *service.ClusterService
-		storage        *memory.Storage
+		storage        *mock.Storage
 		ctx            context.Context
 		testClusterId  string
 	)
 
 	BeforeEach(func() {
-		storage = memory.New()
+		storage = mock.New()
 		monitor = service.NewAgentMonitor(storage)
 		agentService = service.NewAgentService(storage)
 		clusterService = service.NewClusterService(storage)

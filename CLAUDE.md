@@ -169,8 +169,10 @@ netctrl-server/
 │   │   └── health.go          # Health checks
 │   ├── storage/               # Data persistence
 │   │   ├── interface.go       # Storage contract
-│   │   └── memory/
-│   │       └── memory.go      # In-memory implementation
+│   │   └── postgres/
+│   │       ├── postgres.go    # PostgreSQL connection pool
+│   │       ├── cluster.go     # Cluster operations
+│   │       └── agent.go       # Agent operations
 │   └── config/
 │       └── config.go          # Configuration management
 ├── pkg/api/v1/                # Generated gRPC code
@@ -187,7 +189,7 @@ netctrl-server/
 - **gRPC Server** (port 9090): Native protocol buffers, high performance
 - **HTTP Gateway** (port 8080): REST/JSON API, auto-generated from gRPC definitions
 - **Shared Service Layer**: Both servers use the same business logic
-- **Storage Backend**: Currently in-memory, designed for easy swapping
+- **Storage Backend**: PostgreSQL with connection pooling, JSONB for nested data
 
 ### API Endpoints
 

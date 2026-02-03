@@ -11,8 +11,8 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	v1 "github.com/filanov/netctrl-server/pkg/api/v1"
 	"github.com/filanov/netctrl-server/internal/storage"
+	v1 "github.com/filanov/netctrl-server/pkg/api/v1"
 )
 
 // AgentService implements the AgentService gRPC service
@@ -22,9 +22,9 @@ type AgentService struct {
 }
 
 // NewAgentService creates a new agent service
-func NewAgentService(storage storage.Storage) *AgentService {
+func NewAgentService(store storage.Storage) *AgentService {
 	return &AgentService{
-		storage: storage,
+		storage: store,
 	}
 }
 
@@ -151,7 +151,7 @@ func (s *AgentService) GetInstructions(ctx context.Context, req *v1.GetInstructi
 
 	// Process instruction results if provided
 	if req.LastInstructionId != "" && req.ResultData != "" {
-		if err := s.processInstructionResult(ctx, agent, req.LastInstructionId, req.ResultData); err != nil {
+		if err := s.processInstructionResult(agent, req.ResultData); err != nil {
 			log.Printf("Failed to process instruction result for agent %s: %v", agent.Id, err)
 		}
 	}
@@ -189,7 +189,7 @@ type HardwareData struct {
 }
 
 // processInstructionResult processes the result data from an instruction execution
-func (s *AgentService) processInstructionResult(ctx context.Context, agent *v1.Agent, instructionID string, resultData string) error {
+func (s *AgentService) processInstructionResult(agent *v1.Agent, resultData string) error {
 	// Parse the instruction result
 	var result InstructionResult
 	if err := json.Unmarshal([]byte(resultData), &result); err != nil {

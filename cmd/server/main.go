@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 	"os/signal"
@@ -8,7 +9,7 @@ import (
 
 	"github.com/filanov/netctrl-server/internal/config"
 	"github.com/filanov/netctrl-server/internal/server"
-	"github.com/filanov/netctrl-server/internal/storage/memory"
+	"github.com/filanov/netctrl-server/internal/storage/postgres"
 )
 
 func main() {
@@ -20,11 +21,26 @@ func main() {
 
 	log.Printf("Starting netctrl-server in %s mode", cfg.Server.Environment)
 
-	// Initialize storage
-	var storage = memory.New()
+	// Initialize PostgreSQL storage
+	ctx := context.Background()
+	if cfg.Database.URL == "" {
+		log.Fatalf("DATABASE_URL is required")
+	}
+
+	pgCfg := postgres.Config{
+		URL:            cfg.Database.URL,
+		MaxConnections: cfg.Database.MaxConnections,
+		MinConnections: cfg.Database.MinConnections,
+	}
+	store, err := postgres.New(ctx, pgCfg)
+	if err != nil {
+		log.Fatalf("Failed to initialize PostgreSQL storage: %v", err)
+	}
+
+	log.Println("PostgreSQL storage initialized")
 
 	// Create server
-	srv := server.New(cfg, storage)
+	srv := server.New(cfg, store)
 
 	// Setup signal handling for graceful shutdown
 	sigChan := make(chan os.Signal, 1)
@@ -43,6 +59,7 @@ func main() {
 	case sig := <-sigChan:
 		log.Printf("Received signal: %v", sig)
 		srv.Stop()
+		store.Close()
 	case err := <-errChan:
 		log.Fatalf("Server error: %v", err)
 	}

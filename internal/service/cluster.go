@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	v1 "github.com/filanov/netctrl-server/pkg/api/v1"
 	"github.com/filanov/netctrl-server/internal/storage"
+	v1 "github.com/filanov/netctrl-server/pkg/api/v1"
 )
 
 // ClusterService implements the cluster management service
@@ -21,9 +21,9 @@ type ClusterService struct {
 }
 
 // NewClusterService creates a new cluster service instance
-func NewClusterService(storage storage.Storage) *ClusterService {
+func NewClusterService(store storage.Storage) *ClusterService {
 	return &ClusterService{
-		storage: storage,
+		storage: store,
 	}
 }
 

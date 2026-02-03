@@ -66,8 +66,9 @@ func (s *Server) startGatewayServer() error {
 
 	addr := fmt.Sprintf(":%d", s.config.Gateway.Port)
 	s.gatewayServer = &http.Server{
-		Addr:    addr,
-		Handler: handler,
+		Addr:              addr,
+		Handler:           handler,
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 
 	log.Printf("HTTP gateway listening on %s", addr)

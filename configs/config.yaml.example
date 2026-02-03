@@ -9,8 +9,12 @@ gateway:
   port: 8080
   enable_cors: true
 
-storage:
-  type: memory
+database:
+  # PostgreSQL connection string
+  # Can also be configured via environment variable: DATABASE_URL
+  url: postgres://netctrl:netctrl_dev_password@localhost:5432/netctrl?sslmode=disable
+  max_connections: 100
+  min_connections: 20
 
 logging:
   level: info

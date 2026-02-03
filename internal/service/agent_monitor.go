@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	v1 "github.com/filanov/netctrl-server/pkg/api/v1"
 	"github.com/filanov/netctrl-server/internal/storage"
+	v1 "github.com/filanov/netctrl-server/pkg/api/v1"
 )
 
 const (
@@ -27,9 +27,9 @@ type AgentMonitor struct {
 }
 
 // NewAgentMonitor creates a new agent monitor
-func NewAgentMonitor(storage storage.Storage) *AgentMonitor {
+func NewAgentMonitor(store storage.Storage) *AgentMonitor {
 	return &AgentMonitor{
-		storage: storage,
+		storage: store,
 		stopCh:  make(chan struct{}),
 	}
 }

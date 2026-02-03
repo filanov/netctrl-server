@@ -208,11 +208,58 @@ install-tools: ## Install development tools locally
 	@echo "Tools installed"
 
 # ============================================================================
+# Database Commands
+# ============================================================================
+
+DB_URL ?= postgres://netctrl:netctrl_dev_password@localhost:5432/netctrl?sslmode=disable
+
+db-start: ## Start PostgreSQL with docker-compose
+	@echo "Starting PostgreSQL..."
+	@docker-compose up -d postgres
+	@echo "Waiting for PostgreSQL to be ready..."
+	@sleep 3
+	@docker-compose exec -T postgres pg_isready -U netctrl || (echo "PostgreSQL not ready" && exit 1)
+	@echo "PostgreSQL is ready"
+
+db-stop: ## Stop PostgreSQL
+	@echo "Stopping PostgreSQL..."
+	@docker-compose down
+
+db-shell: ## Connect to PostgreSQL with psql
+	@docker-compose exec postgres psql -U netctrl -d netctrl
+
+db-logs: ## View PostgreSQL logs
+	@docker-compose logs -f postgres
+
+db-reset: ## Reset database (WARNING: deletes all data)
+	@echo "Resetting database (this will delete all data)..."
+	@docker-compose down -v
+	@docker-compose up -d postgres
+	@sleep 3
+	@echo "Database reset complete"
+
+db-migrate: ## Run database migrations (requires golang-migrate)
+	@echo "Running migrations..."
+	@migrate -path ./migrations -database "$(DB_URL)" up
+	@echo "Migrations complete"
+
+db-migrate-down: ## Rollback last migration
+	@echo "Rolling back last migration..."
+	@migrate -path ./migrations -database "$(DB_URL)" down 1
+
+db-migrate-status: ## Check migration status
+	@migrate -path ./migrations -database "$(DB_URL)" version
+
+# ============================================================================
 # Running & Cleanup
 # ============================================================================
 
 run: build ## Build and run the application
 	@echo "Running $(BINARY_NAME)..."
+	@./$(BIN_DIR)/$(BINARY_NAME)
+
+run-local: build-local ## Build and run locally (for connecting to local PostgreSQL)
+	@echo "Running $(BINARY_NAME) locally..."
 	@./$(BIN_DIR)/$(BINARY_NAME)
 
 clean: ## Remove build artifacts
@@ -239,6 +286,7 @@ help: ## Show this help message
 	@echo "  lint         - Run golangci-lint and go vet"
 	@echo "  fmt          - Format all Go code"
 	@echo "  run          - Build and run the application"
+	@echo "  run-local    - Build and run locally (for PostgreSQL testing)"
 	@echo ""
 	@echo "Docker-specific targets:"
 	@echo "  docker-build-dev   - Build development Docker image"
@@ -253,6 +301,16 @@ help: ## Show this help message
 	@echo "  lint-local   - Lint using local tools"
 	@echo "  test-local   - Test using local Go"
 	@echo "  fmt-local    - Format using local Go"
+	@echo ""
+	@echo "Database targets:"
+	@echo "  db-start     - Start PostgreSQL with docker-compose"
+	@echo "  db-stop      - Stop PostgreSQL"
+	@echo "  db-shell     - Connect to PostgreSQL with psql"
+	@echo "  db-logs      - View PostgreSQL logs"
+	@echo "  db-reset     - Reset database (WARNING: deletes all data)"
+	@echo "  db-migrate   - Run database migrations"
+	@echo "  db-migrate-down    - Rollback last migration"
+	@echo "  db-migrate-status  - Check migration status"
 	@echo ""
 	@echo "Utility targets:"
 	@echo "  clean        - Remove build artifacts"

@@ -9,11 +9,11 @@ import (
 
 // Config represents the application configuration
 type Config struct {
-	Server  ServerConfig  `yaml:"server"`
-	GRPC    GRPCConfig    `yaml:"grpc"`
-	Gateway GatewayConfig `yaml:"gateway"`
-	Storage StorageConfig `yaml:"storage"`
-	Logging LoggingConfig `yaml:"logging"`
+	Server   ServerConfig   `yaml:"server"`
+	GRPC     GRPCConfig     `yaml:"grpc"`
+	Gateway  GatewayConfig  `yaml:"gateway"`
+	Database DatabaseConfig `yaml:"database"`
+	Logging  LoggingConfig  `yaml:"logging"`
 }
 
 // ServerConfig contains general server configuration
@@ -23,19 +23,21 @@ type ServerConfig struct {
 
 // GRPCConfig contains gRPC server configuration
 type GRPCConfig struct {
-	Port           int  `yaml:"port"`
+	Port             int  `yaml:"port"`
 	EnableReflection bool `yaml:"enable_reflection"`
 }
 
 // GatewayConfig contains HTTP gateway configuration
 type GatewayConfig struct {
-	Port        int  `yaml:"port"`
-	EnableCORS  bool `yaml:"enable_cors"`
+	Port       int  `yaml:"port"`
+	EnableCORS bool `yaml:"enable_cors"`
 }
 
-// StorageConfig contains storage configuration
-type StorageConfig struct {
-	Type string `yaml:"type"`
+// DatabaseConfig contains PostgreSQL database configuration
+type DatabaseConfig struct {
+	URL            string `yaml:"url"`
+	MaxConnections int32  `yaml:"max_connections"`
+	MinConnections int32  `yaml:"min_connections"`
 }
 
 // LoggingConfig contains logging configuration
@@ -93,8 +95,15 @@ func applyDefaults(config *Config) {
 		config.Gateway.EnableCORS = true
 	}
 
-	if config.Storage.Type == "" {
-		config.Storage.Type = "memory"
+	// Database configuration with environment variable override
+	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
+		config.Database.URL = dbURL
+	}
+	if config.Database.MaxConnections == 0 {
+		config.Database.MaxConnections = 100
+	}
+	if config.Database.MinConnections == 0 {
+		config.Database.MinConnections = 20
 	}
 
 	if config.Logging.Level == "" {

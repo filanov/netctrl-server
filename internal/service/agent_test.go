@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/filanov/netctrl-server/internal/service"
-	"github.com/filanov/netctrl-server/internal/storage/memory"
+	"github.com/filanov/netctrl-server/internal/storage/mock"
 	v1 "github.com/filanov/netctrl-server/pkg/api/v1"
 )
 
@@ -22,7 +22,7 @@ var _ = Describe("AgentService", func() {
 	)
 
 	BeforeEach(func() {
-		storage := memory.New()
+		storage := mock.New()
 		agentService = service.NewAgentService(storage)
 		clusterService = service.NewClusterService(storage)
 		ctx = context.Background()
@@ -360,9 +360,9 @@ var _ = Describe("AgentService", func() {
 
 		It("should accept last instruction ID and result data", func() {
 			req := &v1.GetInstructionsRequest{
-				AgentId:            agentId,
-				LastInstructionId:  "instruction-123",
-				ResultData:         `{"status": "success"}`,
+				AgentId:           agentId,
+				LastInstructionId: "instruction-123",
+				ResultData:        `{"status": "success"}`,
 			}
 
 			resp, err := agentService.GetInstructions(ctx, req)

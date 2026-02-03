@@ -5,8 +5,9 @@ import (
 	"log"
 	"sync"
 
-	"google.golang.org/grpc"
 	"net/http"
+
+	"google.golang.org/grpc"
 
 	"github.com/filanov/netctrl-server/internal/config"
 	"github.com/filanov/netctrl-server/internal/service"
@@ -22,23 +23,23 @@ type Server struct {
 	healthService  *service.HealthService
 	agentMonitor   *service.AgentMonitor
 
-	grpcServer     *grpc.Server
-	gatewayServer  *http.Server
-	gatewayCancel  context.CancelFunc
-	monitorCtx     context.Context
-	monitorCancel  context.CancelFunc
+	grpcServer    *grpc.Server
+	gatewayServer *http.Server
+	gatewayCancel context.CancelFunc
+	monitorCtx    context.Context
+	monitorCancel context.CancelFunc
 }
 
 // New creates a new server instance
-func New(cfg *config.Config, storage storage.Storage) *Server {
+func New(cfg *config.Config, store storage.Storage) *Server {
 	monitorCtx, monitorCancel := context.WithCancel(context.Background())
 	return &Server{
 		config:         cfg,
-		storage:        storage,
-		clusterService: service.NewClusterService(storage),
-		agentService:   service.NewAgentService(storage),
+		storage:        store,
+		clusterService: service.NewClusterService(store),
+		agentService:   service.NewAgentService(store),
 		healthService:  service.NewHealthService(),
-		agentMonitor:   service.NewAgentMonitor(storage),
+		agentMonitor:   service.NewAgentMonitor(store),
 		monitorCtx:     monitorCtx,
 		monitorCancel:  monitorCancel,
 	}

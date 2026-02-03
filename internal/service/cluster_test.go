@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/filanov/netctrl-server/internal/service"
-	"github.com/filanov/netctrl-server/internal/storage/memory"
+	"github.com/filanov/netctrl-server/internal/storage/mock"
 	v1 "github.com/filanov/netctrl-server/pkg/api/v1"
 )
 
@@ -20,7 +20,7 @@ var _ = Describe("ClusterService", func() {
 	)
 
 	BeforeEach(func() {
-		storage := memory.New()
+		storage := mock.New()
 		clusterService = service.NewClusterService(storage)
 		ctx = context.Background()
 	})
