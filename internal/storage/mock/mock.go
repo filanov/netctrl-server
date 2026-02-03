@@ -10,9 +10,9 @@ import (
 
 // Storage is an in-memory storage implementation for testing
 type Storage struct {
-	mu       sync.RWMutex
 	clusters map[string]*v1.Cluster
 	agents   map[string]*v1.Agent
+	mu       sync.RWMutex
 }
 
 // New creates a new mock storage instance

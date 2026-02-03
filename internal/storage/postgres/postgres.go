@@ -17,10 +17,10 @@ type Storage struct {
 // Config holds PostgreSQL configuration
 type Config struct {
 	URL             string
-	MaxConnections  int32
-	MinConnections  int32
 	MaxConnIdleTime string
 	ConnectTimeout  string
+	MaxConnections  int32
+	MinConnections  int32
 }
 
 // New creates a new PostgreSQL storage instance

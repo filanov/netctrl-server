@@ -9,11 +9,11 @@ import (
 
 // Config represents the application configuration
 type Config struct {
+	Logging  LoggingConfig  `yaml:"logging"`
 	Server   ServerConfig   `yaml:"server"`
+	Database DatabaseConfig `yaml:"database"`
 	GRPC     GRPCConfig     `yaml:"grpc"`
 	Gateway  GatewayConfig  `yaml:"gateway"`
-	Database DatabaseConfig `yaml:"database"`
-	Logging  LoggingConfig  `yaml:"logging"`
 }
 
 // ServerConfig contains general server configuration
@@ -23,21 +23,21 @@ type ServerConfig struct {
 
 // GRPCConfig contains gRPC server configuration
 type GRPCConfig struct {
-	Port             int  `yaml:"port"`
 	EnableReflection bool `yaml:"enable_reflection"`
+	Port             int  `yaml:"port"`
 }
 
 // GatewayConfig contains HTTP gateway configuration
 type GatewayConfig struct {
-	Port       int  `yaml:"port"`
 	EnableCORS bool `yaml:"enable_cors"`
+	Port       int  `yaml:"port"`
 }
 
 // DatabaseConfig contains PostgreSQL database configuration
 type DatabaseConfig struct {
 	URL            string `yaml:"url"`
-	MaxConnections int32  `yaml:"max_connections"`
 	MinConnections int32  `yaml:"min_connections"`
+	MaxConnections int32  `yaml:"max_connections"`
 }
 
 // LoggingConfig contains logging configuration
