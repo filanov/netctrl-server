@@ -257,6 +257,34 @@ message Instruction {
   google.protobuf.Timestamp created_at = 4;
 }
 
+// HardwareCollectionResult contains the result of hardware collection
+message HardwareCollectionResult {
+  // Collected Mellanox NICs
+  repeated MellanoxNIC network_interfaces = 1;
+}
+
+// HealthCheckResult contains the result of a health check
+message HealthCheckResult {
+  // Health status
+  bool healthy = 1;
+
+  // Optional error message if unhealthy
+  string error_message = 2;
+}
+
+// InstructionResult represents the result of executing an instruction
+message InstructionResult {
+  // Type of instruction that was executed
+  InstructionType instruction_type = 1;
+
+  // Type-specific result data
+  oneof result {
+    HardwareCollectionResult hardware_collection = 2;
+    HealthCheckResult health_check = 3;
+    // Future result types can be added here
+  }
+}
+
 // GetInstructionsRequest requests pending instructions for an agent
 message GetInstructionsRequest {
   // ID of the agent requesting instructions
@@ -265,8 +293,8 @@ message GetInstructionsRequest {
   // Optional: ID of the last successfully processed instruction (acknowledgment)
   string last_instruction_id = 2;
 
-  // Optional: Result data from the last instruction execution
-  string result_data = 3;
+  // Optional: Result from the last instruction execution
+  InstructionResult result = 3;
 }
 
 // GetInstructionsResponse returns instructions and polling configuration

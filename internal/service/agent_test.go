@@ -362,7 +362,14 @@ var _ = Describe("AgentService", func() {
 			req := &v1.GetInstructionsRequest{
 				AgentId:           agentId,
 				LastInstructionId: "instruction-123",
-				ResultData:        `{"status": "success"}`,
+				Result: &v1.InstructionResult{
+					InstructionType: v1.InstructionType_INSTRUCTION_TYPE_HEALTH_CHECK,
+					Result: &v1.InstructionResult_HealthCheck{
+						HealthCheck: &v1.HealthCheckResult{
+							Healthy: true,
+						},
+					},
+				},
 			}
 
 			resp, err := agentService.GetInstructions(ctx, req)

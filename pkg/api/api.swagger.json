@@ -415,9 +415,9 @@
           "type": "string",
           "title": "Optional: ID of the last successfully processed instruction (acknowledgment)"
         },
-        "resultData": {
-          "type": "string",
-          "title": "Optional: Result data from the last instruction execution"
+        "result": {
+          "$ref": "#/definitions/v1InstructionResult",
+          "title": "Optional: Result from the last instruction execution"
         }
       },
       "title": "GetInstructionsRequest requests pending instructions for an agent"
@@ -638,6 +638,20 @@
       },
       "title": "GetInstructionsResponse returns instructions and polling configuration"
     },
+    "v1HardwareCollectionResult": {
+      "type": "object",
+      "properties": {
+        "networkInterfaces": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1MellanoxNIC"
+          },
+          "title": "Collected Mellanox NICs"
+        }
+      },
+      "title": "HardwareCollectionResult contains the result of hardware collection"
+    },
     "v1HealthCheckResponse": {
       "type": "object",
       "properties": {
@@ -651,6 +665,20 @@
         }
       },
       "title": "HealthCheckResponse contains health status information"
+    },
+    "v1HealthCheckResult": {
+      "type": "object",
+      "properties": {
+        "healthy": {
+          "type": "boolean",
+          "title": "Health status"
+        },
+        "errorMessage": {
+          "type": "string",
+          "title": "Optional error message if unhealthy"
+        }
+      },
+      "title": "HealthCheckResult contains the result of a health check"
     },
     "v1HealthStatus": {
       "type": "string",
@@ -684,6 +712,23 @@
         }
       },
       "title": "Instruction represents a command or directive from the service to an agent"
+    },
+    "v1InstructionResult": {
+      "type": "object",
+      "properties": {
+        "instructionType": {
+          "$ref": "#/definitions/v1InstructionType",
+          "title": "Type of instruction that was executed"
+        },
+        "hardwareCollection": {
+          "$ref": "#/definitions/v1HardwareCollectionResult"
+        },
+        "healthCheck": {
+          "$ref": "#/definitions/v1HealthCheckResult",
+          "title": "Future result types can be added here"
+        }
+      },
+      "title": "InstructionResult represents the result of executing an instruction"
     },
     "v1InstructionType": {
       "type": "string",

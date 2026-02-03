@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -150,8 +149,8 @@ func (s *AgentService) GetInstructions(ctx context.Context, req *v1.GetInstructi
 	}
 
 	// Process instruction results if provided
-	if req.LastInstructionId != "" && req.ResultData != "" {
-		if err := s.processInstructionResult(agent, req.ResultData); err != nil {
+	if req.LastInstructionId != "" && req.Result != nil {
+		if err := s.processInstructionResult(agent, req.Result); err != nil {
 			log.Printf("Failed to process instruction result for agent %s: %v", agent.Id, err)
 		}
 	}
@@ -177,42 +176,32 @@ func (s *AgentService) GetInstructions(ctx context.Context, req *v1.GetInstructi
 	}, nil
 }
 
-// InstructionResult represents the result from an instruction execution
-type InstructionResult struct {
-	InstructionType v1.InstructionType `json:"instruction_type"`
-	Data            json.RawMessage    `json:"data"`
-}
-
-// HardwareData represents hardware collection result
-type HardwareData struct {
-	NetworkInterfaces []*v1.MellanoxNIC `json:"network_interfaces"`
-}
-
-// processInstructionResult processes the result data from an instruction execution
-func (s *AgentService) processInstructionResult(agent *v1.Agent, resultData string) error {
-	// Parse the instruction result
-	var result InstructionResult
-	if err := json.Unmarshal([]byte(resultData), &result); err != nil {
-		return fmt.Errorf("failed to parse instruction result: %w", err)
-	}
-
+// processInstructionResult processes the result from an instruction execution
+func (s *AgentService) processInstructionResult(agent *v1.Agent, result *v1.InstructionResult) error {
 	// Process based on instruction type
 	switch result.InstructionType {
 	case v1.InstructionType_INSTRUCTION_TYPE_COLLECT_HARDWARE:
-		var hwData HardwareData
-		if err := json.Unmarshal(result.Data, &hwData); err != nil {
-			return fmt.Errorf("failed to parse hardware data: %w", err)
+		hwResult := result.GetHardwareCollection()
+		if hwResult == nil {
+			return fmt.Errorf("hardware collection result is missing")
 		}
 
 		// Update agent with hardware information (even if empty)
-		agent.NetworkInterfaces = hwData.NetworkInterfaces
+		agent.NetworkInterfaces = hwResult.NetworkInterfaces
 		agent.HardwareCollected = true
 
-		if len(hwData.NetworkInterfaces) > 0 {
-			log.Printf("Hardware collected for agent %s: %d NICs", agent.Id, len(hwData.NetworkInterfaces))
+		if len(hwResult.NetworkInterfaces) > 0 {
+			log.Printf("Hardware collected for agent %s: %d NICs", agent.Id, len(hwResult.NetworkInterfaces))
 		} else {
 			log.Printf("Hardware collected for agent %s: no Mellanox NICs found", agent.Id)
 		}
+
+	case v1.InstructionType_INSTRUCTION_TYPE_HEALTH_CHECK:
+		healthResult := result.GetHealthCheck()
+		if healthResult == nil {
+			return fmt.Errorf("health check result is missing")
+		}
+		log.Printf("Health check from agent %s: healthy=%v", agent.Id, healthResult.Healthy)
 
 	default:
 		log.Printf("Unknown instruction type: %v", result.InstructionType)

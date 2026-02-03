@@ -1078,6 +1078,201 @@ func (x *Instruction) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+// HardwareCollectionResult contains the result of hardware collection
+type HardwareCollectionResult struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Collected Mellanox NICs
+	NetworkInterfaces []*MellanoxNIC `protobuf:"bytes,1,rep,name=network_interfaces,json=networkInterfaces,proto3" json:"network_interfaces,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *HardwareCollectionResult) Reset() {
+	*x = HardwareCollectionResult{}
+	mi := &file_v1_agent_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HardwareCollectionResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HardwareCollectionResult) ProtoMessage() {}
+
+func (x *HardwareCollectionResult) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_agent_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HardwareCollectionResult.ProtoReflect.Descriptor instead.
+func (*HardwareCollectionResult) Descriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *HardwareCollectionResult) GetNetworkInterfaces() []*MellanoxNIC {
+	if x != nil {
+		return x.NetworkInterfaces
+	}
+	return nil
+}
+
+// HealthCheckResult contains the result of a health check
+type HealthCheckResult struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Health status
+	Healthy bool `protobuf:"varint,1,opt,name=healthy,proto3" json:"healthy,omitempty"`
+	// Optional error message if unhealthy
+	ErrorMessage  string `protobuf:"bytes,2,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HealthCheckResult) Reset() {
+	*x = HealthCheckResult{}
+	mi := &file_v1_agent_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HealthCheckResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HealthCheckResult) ProtoMessage() {}
+
+func (x *HealthCheckResult) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_agent_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HealthCheckResult.ProtoReflect.Descriptor instead.
+func (*HealthCheckResult) Descriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *HealthCheckResult) GetHealthy() bool {
+	if x != nil {
+		return x.Healthy
+	}
+	return false
+}
+
+func (x *HealthCheckResult) GetErrorMessage() string {
+	if x != nil {
+		return x.ErrorMessage
+	}
+	return ""
+}
+
+// InstructionResult represents the result of executing an instruction
+type InstructionResult struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Type of instruction that was executed
+	InstructionType InstructionType `protobuf:"varint,1,opt,name=instruction_type,json=instructionType,proto3,enum=netctrl.v1.InstructionType" json:"instruction_type,omitempty"`
+	// Type-specific result data
+	//
+	// Types that are valid to be assigned to Result:
+	//
+	//	*InstructionResult_HardwareCollection
+	//	*InstructionResult_HealthCheck
+	Result        isInstructionResult_Result `protobuf_oneof:"result"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *InstructionResult) Reset() {
+	*x = InstructionResult{}
+	mi := &file_v1_agent_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *InstructionResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InstructionResult) ProtoMessage() {}
+
+func (x *InstructionResult) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_agent_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InstructionResult.ProtoReflect.Descriptor instead.
+func (*InstructionResult) Descriptor() ([]byte, []int) {
+	return file_v1_agent_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *InstructionResult) GetInstructionType() InstructionType {
+	if x != nil {
+		return x.InstructionType
+	}
+	return InstructionType_INSTRUCTION_TYPE_UNSPECIFIED
+}
+
+func (x *InstructionResult) GetResult() isInstructionResult_Result {
+	if x != nil {
+		return x.Result
+	}
+	return nil
+}
+
+func (x *InstructionResult) GetHardwareCollection() *HardwareCollectionResult {
+	if x != nil {
+		if x, ok := x.Result.(*InstructionResult_HardwareCollection); ok {
+			return x.HardwareCollection
+		}
+	}
+	return nil
+}
+
+func (x *InstructionResult) GetHealthCheck() *HealthCheckResult {
+	if x != nil {
+		if x, ok := x.Result.(*InstructionResult_HealthCheck); ok {
+			return x.HealthCheck
+		}
+	}
+	return nil
+}
+
+type isInstructionResult_Result interface {
+	isInstructionResult_Result()
+}
+
+type InstructionResult_HardwareCollection struct {
+	HardwareCollection *HardwareCollectionResult `protobuf:"bytes,2,opt,name=hardware_collection,json=hardwareCollection,proto3,oneof"`
+}
+
+type InstructionResult_HealthCheck struct {
+	HealthCheck *HealthCheckResult `protobuf:"bytes,3,opt,name=health_check,json=healthCheck,proto3,oneof"` // Future result types can be added here
+}
+
+func (*InstructionResult_HardwareCollection) isInstructionResult_Result() {}
+
+func (*InstructionResult_HealthCheck) isInstructionResult_Result() {}
+
 // GetInstructionsRequest requests pending instructions for an agent
 type GetInstructionsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -1085,15 +1280,15 @@ type GetInstructionsRequest struct {
 	AgentId string `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
 	// Optional: ID of the last successfully processed instruction (acknowledgment)
 	LastInstructionId string `protobuf:"bytes,2,opt,name=last_instruction_id,json=lastInstructionId,proto3" json:"last_instruction_id,omitempty"`
-	// Optional: Result data from the last instruction execution
-	ResultData    string `protobuf:"bytes,3,opt,name=result_data,json=resultData,proto3" json:"result_data,omitempty"`
+	// Optional: Result from the last instruction execution
+	Result        *InstructionResult `protobuf:"bytes,3,opt,name=result,proto3" json:"result,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetInstructionsRequest) Reset() {
 	*x = GetInstructionsRequest{}
-	mi := &file_v1_agent_proto_msgTypes[12]
+	mi := &file_v1_agent_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1105,7 +1300,7 @@ func (x *GetInstructionsRequest) String() string {
 func (*GetInstructionsRequest) ProtoMessage() {}
 
 func (x *GetInstructionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[12]
+	mi := &file_v1_agent_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1118,7 +1313,7 @@ func (x *GetInstructionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInstructionsRequest.ProtoReflect.Descriptor instead.
 func (*GetInstructionsRequest) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{12}
+	return file_v1_agent_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetInstructionsRequest) GetAgentId() string {
@@ -1135,11 +1330,11 @@ func (x *GetInstructionsRequest) GetLastInstructionId() string {
 	return ""
 }
 
-func (x *GetInstructionsRequest) GetResultData() string {
+func (x *GetInstructionsRequest) GetResult() *InstructionResult {
 	if x != nil {
-		return x.ResultData
+		return x.Result
 	}
-	return ""
+	return nil
 }
 
 // GetInstructionsResponse returns instructions and polling configuration
@@ -1158,7 +1353,7 @@ type GetInstructionsResponse struct {
 
 func (x *GetInstructionsResponse) Reset() {
 	*x = GetInstructionsResponse{}
-	mi := &file_v1_agent_proto_msgTypes[13]
+	mi := &file_v1_agent_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1170,7 +1365,7 @@ func (x *GetInstructionsResponse) String() string {
 func (*GetInstructionsResponse) ProtoMessage() {}
 
 func (x *GetInstructionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_agent_proto_msgTypes[13]
+	mi := &file_v1_agent_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1183,7 +1378,7 @@ func (x *GetInstructionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInstructionsResponse.ProtoReflect.Descriptor instead.
 func (*GetInstructionsResponse) Descriptor() ([]byte, []int) {
-	return file_v1_agent_proto_rawDescGZIP(), []int{13}
+	return file_v1_agent_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetInstructionsResponse) GetInstructions() []*Instruction {
@@ -1282,12 +1477,21 @@ const file_v1_agent_proto_rawDesc = "" +
 	"\x04type\x18\x02 \x01(\x0e2\x1b.netctrl.v1.InstructionTypeR\x04type\x12\x18\n" +
 	"\apayload\x18\x03 \x01(\tR\apayload\x129\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x84\x01\n" +
+	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"b\n" +
+	"\x18HardwareCollectionResult\x12F\n" +
+	"\x12network_interfaces\x18\x01 \x03(\v2\x17.netctrl.v1.MellanoxNICR\x11networkInterfaces\"R\n" +
+	"\x11HealthCheckResult\x12\x18\n" +
+	"\ahealthy\x18\x01 \x01(\bR\ahealthy\x12#\n" +
+	"\rerror_message\x18\x02 \x01(\tR\ferrorMessage\"\x82\x02\n" +
+	"\x11InstructionResult\x12F\n" +
+	"\x10instruction_type\x18\x01 \x01(\x0e2\x1b.netctrl.v1.InstructionTypeR\x0finstructionType\x12W\n" +
+	"\x13hardware_collection\x18\x02 \x01(\v2$.netctrl.v1.HardwareCollectionResultH\x00R\x12hardwareCollection\x12B\n" +
+	"\fhealth_check\x18\x03 \x01(\v2\x1d.netctrl.v1.HealthCheckResultH\x00R\vhealthCheckB\b\n" +
+	"\x06result\"\x9a\x01\n" +
 	"\x16GetInstructionsRequest\x12\x19\n" +
 	"\bagent_id\x18\x01 \x01(\tR\aagentId\x12.\n" +
-	"\x13last_instruction_id\x18\x02 \x01(\tR\x11lastInstructionId\x12\x1f\n" +
-	"\vresult_data\x18\x03 \x01(\tR\n" +
-	"resultData\"\xc7\x01\n" +
+	"\x13last_instruction_id\x18\x02 \x01(\tR\x11lastInstructionId\x125\n" +
+	"\x06result\x18\x03 \x01(\v2\x1d.netctrl.v1.InstructionResultR\x06result\"\xc7\x01\n" +
 	"\x17GetInstructionsResponse\x12;\n" +
 	"\finstructions\x18\x01 \x03(\v2\x17.netctrl.v1.InstructionR\finstructions\x122\n" +
 	"\x15poll_interval_seconds\x18\x02 \x01(\x05R\x13pollIntervalSeconds\x12;\n" +
@@ -1343,59 +1547,67 @@ func file_v1_agent_proto_rawDescGZIP() []byte {
 }
 
 var file_v1_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_v1_agent_proto_goTypes = []any{
-	(AgentStatus)(0),                // 0: netctrl.v1.AgentStatus
-	(PortState)(0),                  // 1: netctrl.v1.PortState
-	(PortSpeed)(0),                  // 2: netctrl.v1.PortSpeed
-	(InstructionType)(0),            // 3: netctrl.v1.InstructionType
-	(*MellanoxPort)(nil),            // 4: netctrl.v1.MellanoxPort
-	(*MellanoxNIC)(nil),             // 5: netctrl.v1.MellanoxNIC
-	(*Agent)(nil),                   // 6: netctrl.v1.Agent
-	(*RegisterAgentRequest)(nil),    // 7: netctrl.v1.RegisterAgentRequest
-	(*RegisterAgentResponse)(nil),   // 8: netctrl.v1.RegisterAgentResponse
-	(*GetAgentRequest)(nil),         // 9: netctrl.v1.GetAgentRequest
-	(*GetAgentResponse)(nil),        // 10: netctrl.v1.GetAgentResponse
-	(*ListAgentsRequest)(nil),       // 11: netctrl.v1.ListAgentsRequest
-	(*ListAgentsResponse)(nil),      // 12: netctrl.v1.ListAgentsResponse
-	(*UnregisterAgentRequest)(nil),  // 13: netctrl.v1.UnregisterAgentRequest
-	(*UnregisterAgentResponse)(nil), // 14: netctrl.v1.UnregisterAgentResponse
-	(*Instruction)(nil),             // 15: netctrl.v1.Instruction
-	(*GetInstructionsRequest)(nil),  // 16: netctrl.v1.GetInstructionsRequest
-	(*GetInstructionsResponse)(nil), // 17: netctrl.v1.GetInstructionsResponse
-	(*timestamppb.Timestamp)(nil),   // 18: google.protobuf.Timestamp
+	(AgentStatus)(0),                 // 0: netctrl.v1.AgentStatus
+	(PortState)(0),                   // 1: netctrl.v1.PortState
+	(PortSpeed)(0),                   // 2: netctrl.v1.PortSpeed
+	(InstructionType)(0),             // 3: netctrl.v1.InstructionType
+	(*MellanoxPort)(nil),             // 4: netctrl.v1.MellanoxPort
+	(*MellanoxNIC)(nil),              // 5: netctrl.v1.MellanoxNIC
+	(*Agent)(nil),                    // 6: netctrl.v1.Agent
+	(*RegisterAgentRequest)(nil),     // 7: netctrl.v1.RegisterAgentRequest
+	(*RegisterAgentResponse)(nil),    // 8: netctrl.v1.RegisterAgentResponse
+	(*GetAgentRequest)(nil),          // 9: netctrl.v1.GetAgentRequest
+	(*GetAgentResponse)(nil),         // 10: netctrl.v1.GetAgentResponse
+	(*ListAgentsRequest)(nil),        // 11: netctrl.v1.ListAgentsRequest
+	(*ListAgentsResponse)(nil),       // 12: netctrl.v1.ListAgentsResponse
+	(*UnregisterAgentRequest)(nil),   // 13: netctrl.v1.UnregisterAgentRequest
+	(*UnregisterAgentResponse)(nil),  // 14: netctrl.v1.UnregisterAgentResponse
+	(*Instruction)(nil),              // 15: netctrl.v1.Instruction
+	(*HardwareCollectionResult)(nil), // 16: netctrl.v1.HardwareCollectionResult
+	(*HealthCheckResult)(nil),        // 17: netctrl.v1.HealthCheckResult
+	(*InstructionResult)(nil),        // 18: netctrl.v1.InstructionResult
+	(*GetInstructionsRequest)(nil),   // 19: netctrl.v1.GetInstructionsRequest
+	(*GetInstructionsResponse)(nil),  // 20: netctrl.v1.GetInstructionsResponse
+	(*timestamppb.Timestamp)(nil),    // 21: google.protobuf.Timestamp
 }
 var file_v1_agent_proto_depIdxs = []int32{
 	1,  // 0: netctrl.v1.MellanoxPort.state:type_name -> netctrl.v1.PortState
 	2,  // 1: netctrl.v1.MellanoxPort.speed:type_name -> netctrl.v1.PortSpeed
 	4,  // 2: netctrl.v1.MellanoxNIC.ports:type_name -> netctrl.v1.MellanoxPort
 	0,  // 3: netctrl.v1.Agent.status:type_name -> netctrl.v1.AgentStatus
-	18, // 4: netctrl.v1.Agent.last_seen:type_name -> google.protobuf.Timestamp
-	18, // 5: netctrl.v1.Agent.created_at:type_name -> google.protobuf.Timestamp
-	18, // 6: netctrl.v1.Agent.updated_at:type_name -> google.protobuf.Timestamp
+	21, // 4: netctrl.v1.Agent.last_seen:type_name -> google.protobuf.Timestamp
+	21, // 5: netctrl.v1.Agent.created_at:type_name -> google.protobuf.Timestamp
+	21, // 6: netctrl.v1.Agent.updated_at:type_name -> google.protobuf.Timestamp
 	5,  // 7: netctrl.v1.Agent.network_interfaces:type_name -> netctrl.v1.MellanoxNIC
 	6,  // 8: netctrl.v1.RegisterAgentResponse.agent:type_name -> netctrl.v1.Agent
 	6,  // 9: netctrl.v1.GetAgentResponse.agent:type_name -> netctrl.v1.Agent
 	6,  // 10: netctrl.v1.ListAgentsResponse.agents:type_name -> netctrl.v1.Agent
 	3,  // 11: netctrl.v1.Instruction.type:type_name -> netctrl.v1.InstructionType
-	18, // 12: netctrl.v1.Instruction.created_at:type_name -> google.protobuf.Timestamp
-	15, // 13: netctrl.v1.GetInstructionsResponse.instructions:type_name -> netctrl.v1.Instruction
-	18, // 14: netctrl.v1.GetInstructionsResponse.server_time:type_name -> google.protobuf.Timestamp
-	7,  // 15: netctrl.v1.AgentService.RegisterAgent:input_type -> netctrl.v1.RegisterAgentRequest
-	9,  // 16: netctrl.v1.AgentService.GetAgent:input_type -> netctrl.v1.GetAgentRequest
-	11, // 17: netctrl.v1.AgentService.ListAgents:input_type -> netctrl.v1.ListAgentsRequest
-	13, // 18: netctrl.v1.AgentService.UnregisterAgent:input_type -> netctrl.v1.UnregisterAgentRequest
-	16, // 19: netctrl.v1.AgentService.GetInstructions:input_type -> netctrl.v1.GetInstructionsRequest
-	8,  // 20: netctrl.v1.AgentService.RegisterAgent:output_type -> netctrl.v1.RegisterAgentResponse
-	10, // 21: netctrl.v1.AgentService.GetAgent:output_type -> netctrl.v1.GetAgentResponse
-	12, // 22: netctrl.v1.AgentService.ListAgents:output_type -> netctrl.v1.ListAgentsResponse
-	14, // 23: netctrl.v1.AgentService.UnregisterAgent:output_type -> netctrl.v1.UnregisterAgentResponse
-	17, // 24: netctrl.v1.AgentService.GetInstructions:output_type -> netctrl.v1.GetInstructionsResponse
-	20, // [20:25] is the sub-list for method output_type
-	15, // [15:20] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	21, // 12: netctrl.v1.Instruction.created_at:type_name -> google.protobuf.Timestamp
+	5,  // 13: netctrl.v1.HardwareCollectionResult.network_interfaces:type_name -> netctrl.v1.MellanoxNIC
+	3,  // 14: netctrl.v1.InstructionResult.instruction_type:type_name -> netctrl.v1.InstructionType
+	16, // 15: netctrl.v1.InstructionResult.hardware_collection:type_name -> netctrl.v1.HardwareCollectionResult
+	17, // 16: netctrl.v1.InstructionResult.health_check:type_name -> netctrl.v1.HealthCheckResult
+	18, // 17: netctrl.v1.GetInstructionsRequest.result:type_name -> netctrl.v1.InstructionResult
+	15, // 18: netctrl.v1.GetInstructionsResponse.instructions:type_name -> netctrl.v1.Instruction
+	21, // 19: netctrl.v1.GetInstructionsResponse.server_time:type_name -> google.protobuf.Timestamp
+	7,  // 20: netctrl.v1.AgentService.RegisterAgent:input_type -> netctrl.v1.RegisterAgentRequest
+	9,  // 21: netctrl.v1.AgentService.GetAgent:input_type -> netctrl.v1.GetAgentRequest
+	11, // 22: netctrl.v1.AgentService.ListAgents:input_type -> netctrl.v1.ListAgentsRequest
+	13, // 23: netctrl.v1.AgentService.UnregisterAgent:input_type -> netctrl.v1.UnregisterAgentRequest
+	19, // 24: netctrl.v1.AgentService.GetInstructions:input_type -> netctrl.v1.GetInstructionsRequest
+	8,  // 25: netctrl.v1.AgentService.RegisterAgent:output_type -> netctrl.v1.RegisterAgentResponse
+	10, // 26: netctrl.v1.AgentService.GetAgent:output_type -> netctrl.v1.GetAgentResponse
+	12, // 27: netctrl.v1.AgentService.ListAgents:output_type -> netctrl.v1.ListAgentsResponse
+	14, // 28: netctrl.v1.AgentService.UnregisterAgent:output_type -> netctrl.v1.UnregisterAgentResponse
+	20, // 29: netctrl.v1.AgentService.GetInstructions:output_type -> netctrl.v1.GetInstructionsResponse
+	25, // [25:30] is the sub-list for method output_type
+	20, // [20:25] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_v1_agent_proto_init() }
@@ -1403,13 +1615,17 @@ func file_v1_agent_proto_init() {
 	if File_v1_agent_proto != nil {
 		return
 	}
+	file_v1_agent_proto_msgTypes[14].OneofWrappers = []any{
+		(*InstructionResult_HardwareCollection)(nil),
+		(*InstructionResult_HealthCheck)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_agent_proto_rawDesc), len(file_v1_agent_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   14,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
